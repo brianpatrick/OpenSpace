@@ -2,7 +2,7 @@
  *                                                                                       *
  * OpenSpace                                                                             *
  *                                                                                       *
- * Copyright (c) 2014-2025                                                               *
+ * Copyright (c) 2014-2026                                                               *
  *                                                                                       *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this  *
  * software and associated documentation files (the "Software"), to deal in the Software *
@@ -25,46 +25,65 @@
 #include <modules/webbrowser/include/screenspacebrowser.h>
 
 #include <modules/webbrowser/webbrowsermodule.h>
-#include <modules/webbrowser/include/webkeyboardhandler.h>
 #include <modules/webbrowser/include/browserinstance.h>
-#include <openspace/documentation/verifier.h>
+#include <modules/webbrowser/include/eventhandler.h>
+#include <openspace/documentation/documentation.h>
 #include <openspace/engine/globals.h>
 #include <openspace/engine/moduleengine.h>
-#include <openspace/engine/windowdelegate.h>
+#include <openspace/util/keys.h>
+#include <ghoul/format.h>
 #include <ghoul/logging/logmanager.h>
-#include <ghoul/opengl/texture.h>
+#include <ghoul/misc/dictionary.h>
+#include <ghoul/opengl/textureunit.h>
 #include <optional>
 
 namespace {
+    using namespace openspace;
+
     constexpr std::string_view _loggerCat = "ScreenSpaceBrowser";
 
-    constexpr openspace::properties::Property::PropertyInfo DimensionsInfo = {
+    constexpr Property::PropertyInfo DimensionsInfo = {
         "Dimensions",
-        "Browser Dimensions",
+        "Browser dimensions",
         "The dimensions of the web browser window in pixels.",
-        openspace::properties::Property::Visibility::User
+        Property::Visibility::User
     };
 
-    constexpr openspace::properties::Property::PropertyInfo UrlInfo = {
+    constexpr Property::PropertyInfo KeyInfo = {
+        "Key",
+        "Key",
+        "The string representation of a keyboard key. If a key is entered and the "
+        "`KeyTrigger` property is triggered, the entered key will be sent to the browser.",
+        Property::Visibility::User
+    };
+
+    constexpr Property::PropertyInfo TriggerKeyInfo = {
+        "TriggerKey",
+        "Trigger key",
+        "When this property is triggered, the text in the `Key` property will be used to "
+        "create a keyboard input that is then sent to the browser.",
+        Property::Visibility::User
+    };
+
+    constexpr Property::PropertyInfo UrlInfo = {
         "Url",
         "URL",
         "The URL to load.",
-        openspace::properties::Property::Visibility::NoviceUser
+        Property::Visibility::NoviceUser
     };
 
-    constexpr openspace::properties::Property::PropertyInfo ReloadInfo = {
+    constexpr Property::PropertyInfo ReloadInfo = {
         "Reload",
         "Reload",
         "Reload the web browser.",
-        openspace::properties::Property::Visibility::NoviceUser
+        Property::Visibility::NoviceUser
     };
 
-    // This `ScreenSpaceRenderable` can be used to render a webpage in front of the
-    // camera. This can be used to show various dynamic content, for example using the
-    // scripting API.
+    // Can be used to render a webpage in front of the camera. This can be used to show
+    // various dynamic content, for example using the scripting API.
     //
-    // Note that mouse input will not be passed to the rendered view, so it will not be
-    // possible to interact with the web page.
+    // Note that mouse or keyboard input will not be passed to the rendered view, so it
+    // will not be possible to interact with the webpage.
     struct [[codegen::Dictionary(ScreenSpaceBrowser)]] Parameters {
         // A unique identifier for this screen space browser.
         std::optional<std::string> identifier [[codegen::identifier()]];
@@ -75,9 +94,8 @@ namespace {
         // [[codegen::verbatim(DimensionsInfo.description)]]
         std::optional<glm::vec2> dimensions [[codegen::greater({ 0, 0 })]];
     };
-#include "screenspacebrowser_codegen.cpp"
-
 } // namespace
+#include "screenspacebrowser_codegen.cpp"
 
 namespace openspace {
 
@@ -89,16 +107,18 @@ void ScreenSpaceBrowser::ScreenSpaceRenderHandler::setTexture(GLuint t) {
     _texture = t;
 }
 
-documentation::Documentation ScreenSpaceBrowser::Documentation() {
-    return codegen::doc<Parameters>("core_screenspace_browser");
+Documentation ScreenSpaceBrowser::Documentation() {
+    return codegen::doc<Parameters>("webbrowser_screenspace_browser");
 }
 
 ScreenSpaceBrowser::ScreenSpaceBrowser(const ghoul::Dictionary& dictionary)
     : ScreenSpaceRenderable(dictionary)
     , _dimensions(DimensionsInfo, glm::uvec2(0), glm::uvec2(0), glm::uvec2(3000))
-    , _renderHandler(new ScreenSpaceRenderHandler)
-    , _url(UrlInfo)
     , _reload(ReloadInfo)
+    , _key(::KeyInfo)
+    , _triggerKey(TriggerKeyInfo)
+    , _url(UrlInfo)
+    , _renderHandler(new ScreenSpaceRenderHandler)
     , _keyboardHandler(new WebKeyboardHandler)
 {
     const Parameters p = codegen::bake<Parameters>(dictionary);
@@ -107,22 +127,35 @@ ScreenSpaceBrowser::ScreenSpaceBrowser(const ghoul::Dictionary& dictionary)
     identifier = makeUniqueIdentifier(identifier);
     setIdentifier(identifier);
 
-    _url = p.url.value_or(_url);
+    addProperty(_key);
+    _triggerKey.onChange([this]() {
+        const KeyWithModifier key = stringToKey(_key);
+        CefKeyEvent k = EventHandler::toCefKeyEvent(key);
 
-    _dimensions = p.dimensions.value_or(global::windowDelegate->currentSubwindowSize());
+        k.type = KEYEVENT_KEYDOWN;
+        _browserInstance->sendKeyEvent(k);
+
+        k.type = KEYEVENT_KEYUP;
+        _browserInstance->sendKeyEvent(k);
+    });
+    addProperty(_triggerKey);
+
+    _url = p.url.value_or(_url);
+    _url.onChange([this]() { _isUrlDirty = true; });
+    addProperty(_url);
+
+    _dimensions = p.dimensions.value_or(glm::vec2(1920, 1080));
+    _dimensions.onChange([this]() { _isDimensionsDirty = true; });
+    addProperty(_dimensions);
 
     _browserInstance = std::make_unique<BrowserInstance>(
         _renderHandler.get(),
         _keyboardHandler.get()
     );
 
-    _url.onChange([this]() { _isUrlDirty = true; });
-    _dimensions.onChange([this]() { _isDimensionsDirty = true; });
     _reload.onChange([this]() { _browserInstance->reloadBrowser(); });
-
-    addProperty(_url);
-    addProperty(_dimensions);
     addProperty(_reload);
+
     _useAcceleratedRendering = WebBrowserModule::canUseAcceleratedRendering();
 
     WebBrowserModule* webBrowser = global::moduleEngine->module<WebBrowserModule>();
@@ -131,15 +164,15 @@ ScreenSpaceBrowser::ScreenSpaceBrowser(const ghoul::Dictionary& dictionary)
     }
 }
 
-bool ScreenSpaceBrowser::initializeGL() {
-    createShaders();
+void ScreenSpaceBrowser::initializeGL() {
+    ScreenSpaceRenderable::initializeGL();
 
+    createShaders();
     _browserInstance->initialize();
     _browserInstance->loadUrl(_url);
-    return isReady();
 }
 
-bool ScreenSpaceBrowser::deinitializeGL() {
+void ScreenSpaceBrowser::deinitializeGL() {
     LDEBUG(std::format("Deinitializing ScreenSpaceBrowser: {}", _url.value()));
 
     _browserInstance->close(true);
@@ -148,7 +181,7 @@ bool ScreenSpaceBrowser::deinitializeGL() {
     webBrowser->removeBrowser(_browserInstance.get());
     _browserInstance.reset();
 
-    return ScreenSpaceRenderable::deinitializeGL();
+    ScreenSpaceRenderable::deinitializeGL();
 }
 
 void ScreenSpaceBrowser::render(const RenderData& renderData) {
@@ -180,12 +213,8 @@ void ScreenSpaceBrowser::update() {
     }
 }
 
-bool ScreenSpaceBrowser::isReady() const {
-    return _shader != nullptr;
-}
-
-void ScreenSpaceBrowser::bindTexture() {
-    _renderHandler->bindTexture();
+void ScreenSpaceBrowser::bindTexture(ghoul::opengl::TextureUnit& unit) {
+    _renderHandler->bindTexture(unit);
 }
 
 } // namespace openspace

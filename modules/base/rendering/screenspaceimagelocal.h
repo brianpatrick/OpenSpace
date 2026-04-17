@@ -2,7 +2,7 @@
  *                                                                                       *
  * OpenSpace                                                                             *
  *                                                                                       *
- * Copyright (c) 2014-2025                                                               *
+ * Copyright (c) 2014-2026                                                               *
  *                                                                                       *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this  *
  * software and associated documentation files (the "Software"), to deal in the Software *
@@ -33,22 +33,20 @@ namespace ghoul::opengl { class Texture; }
 
 namespace openspace {
 
-namespace documentation { struct Documentation; }
-
 class ScreenSpaceImageLocal : public ScreenSpaceRenderable {
 public:
     explicit ScreenSpaceImageLocal(const ghoul::Dictionary& dictionary);
 
-    bool deinitializeGL() override;
+    void deinitializeGL() override;
 
     void update() override;
 
-    static documentation::Documentation Documentation();
+    static openspace::Documentation Documentation();
 
 private:
-    void bindTexture() override;
+    void bindTexture(ghoul::opengl::TextureUnit& unit) override;
 
-    properties::StringProperty _texturePath;
+    StringProperty _texturePath;
 
     std::unique_ptr<ghoul::opengl::Texture> _texture;
     bool _textureIsDirty = false;

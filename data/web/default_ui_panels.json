@@ -1,82 +1,122 @@
 {
     "0": {
-        "name": "Scene",
         "id": "scene",
-        "visible": true
+        "visible": true,
+        "name": "Scene",
+        "isOpen": false
     },
     "1": {
-        "name": "Settings",
         "id": "settings",
-        "visible": false
+        "visible": false,
+        "name": "Settings",
+        "isOpen": false
     },
     "2": {
-        "name": "Navigation",
         "id": "navigation",
-        "visible": true
+        "visible": true,
+        "name": "Navigation",
+        "isOpen": false
     },
     "3": {
-        "name": "Time Panel",
         "id": "timePanel",
-        "visible": true
+        "visible": true,
+        "name": "Time Panel",
+        "isOpen": false
     },
     "4": {
-        "name": "Session Recording",
         "id": "sessionRecording",
-        "visible": true
+        "visible": true,
+        "name": "Session Recording",
+        "isOpen": false
     },
     "5": {
-        "name": "Geo Location",
         "id": "geoLocation",
-        "visible": true
+        "visible": true,
+        "name": "Geo Location",
+        "isOpen": false
     },
     "6": {
-        "name": "Screenspace Renderables",
         "id": "screenSpaceRenderables",
-        "visible": true
+        "visible": true,
+        "name": "Screenspace Renderables",
+        "isOpen": false
     },
     "7": {
-        "name": "Exoplanets",
         "id": "exoplanets",
-        "visible": true
+        "visible": true,
+        "name": "Exoplanets",
+        "isOpen": false
     },
     "8": {
-        "name": "User Panels",
         "id": "userPanels",
-        "visible": true
+        "visible": true,
+        "name": "User Panels",
+        "isOpen": false
     },
     "9": {
-        "name": "Actions",
         "id": "actions",
-        "visible": true
+        "visible": true,
+        "name": "Actions",
+        "isOpen": false
     },
     "10": {
-        "name": "SkyBrowser",
         "id": "skyBrowser",
-        "visible": true
+        "visible": true,
+        "name": "SkyBrowser",
+        "isOpen": false
     },
     "11": {
-        "name": "Mission",
         "id": "mission",
-        "visible": false
+        "visible": false,
+        "name": "Mission",
+        "isOpen": false
     },
     "12": {
-        "name": "Flight Control",
         "id": "flightControl",
-        "visible": true
+        "visible": true,
+        "name": "Flight Control",
+        "isOpen": false
     },
     "13": {
-        "name": "Keybindings Layout",
         "id": "keybindingsLayout",
-        "visible": false
+        "visible": false,
+        "name": "Keybinds",
+        "isOpen": false
     },
     "14": {
-        "name": "Getting Started Tour",
-        "id": "gettingStartedTour",
-        "visible": true
+        "id": "nightSky",
+        "visible": false,
+        "name": "Night Sky",
+        "isOpen": false
     },
     "15": {
-        "name": "Script Log",
+        "id": "gettingStartedTour",
+        "visible": false,
+        "name": "Getting Started Tour",
+        "isOpen": false
+    },
+    "16": {
         "id": "scriptLogPanel",
-        "visible": false
+        "visible": false,
+        "name": "Script Log",
+        "isOpen": false
+    },
+    "17": {
+        "id": "assetsFolderPanel",
+        "visible": false,
+        "name": "Assets",
+        "isOpen": false
+    },
+    "18": {
+    	"id": "globeImageryBrowserPanel",
+    	"visible": false,
+    	"name": "Globe Imagery Browser",
+    	"isOpen": false
+    },
+    "19": {
+        "id": "devPanel",
+        "visible": false,
+        "name": "Dev Panel",
+        "isOpen": false
     }
 }

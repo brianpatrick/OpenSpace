@@ -2,7 +2,7 @@
  *                                                                                       *
  * OpenSpace                                                                             *
  *                                                                                       *
- * Copyright (c) 2014-2025                                                               *
+ * Copyright (c) 2014-2026                                                               *
  *                                                                                       *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this  *
  * software and associated documentation files (the "Software"), to deal in the Software *
@@ -26,17 +26,22 @@
 
 #include <ghoul/format.h>
 #include <ghoul/misc/assert.h>
-#include "sgctedit/displaywindowunion.h"
+#include <sgct/config.h>
+#include <sgct/math.h>
 #include "windowcolors.h"
 #include <QCheckBox>
 #include <QComboBox>
 #include <QGridLayout>
 #include <QLabel>
-#include <QLayout>
-#include <QLineEdit>
 #include <QPushButton>
 #include <QSpinBox>
+#include <algorithm>
 #include <numbers>
+#include <optional>
+#include <array>
+#include <cmath>
+#include <iterator>
+#include <utility>
 
 namespace {
     std::array<std::pair<int, std::string>, 10> Quality = {
@@ -111,7 +116,6 @@ namespace {
         ghoul_assert(it != Quality.cend(), "Combobox has too many values");
         return static_cast<int>(std::distance(Quality.cbegin(), it));
     }
-
 } // namespace
 
 WindowControl::WindowControl(int monitorIndex, int windowIndex,
@@ -498,6 +502,7 @@ QWidget* WindowControl::createFisheyeWidget() {
     //  | { Informational text } |  Row 0
     //  | Quality    * [DDDDD>]  |  Row 1
     //  | Tilt       * [oooooo]  |  Row 2
+    //  | FOV        * [oooooo]  |  Row 3
     //  *------------*-----------*
     
     QWidget* widget = new QWidget;
@@ -539,6 +544,18 @@ QWidget* WindowControl::createFisheyeWidget() {
     _fisheye.tilt->setMinimum(-180.0);
     _fisheye.tilt->setMaximum(180.0);
     layout->addWidget(_fisheye.tilt, 2, 1);
+
+    QLabel* labelFov = new QLabel("FOV");
+    const QString fovTip = "Set the fisheye/dome field-of-view angle used in the fisheye "
+        "renderer.";
+    labelFov->setToolTip(fovTip);
+    layout->addWidget(labelFov, 3, 0);
+
+    _fisheye.fov = new QDoubleSpinBox;
+    _fisheye.fov->setToolTip(fovTip);
+    _fisheye.fov->setMinimum(0.0);
+    _fisheye.fov->setMaximum(360.0);
+    layout->addWidget(_fisheye.fov, 3, 1);
 
     return widget;
 }
@@ -722,8 +739,8 @@ void WindowControl::resetToDefaults() {
     const float newHeight =
         _monitorResolutions[PrimaryMonitorIdx].height() * IdealScaleVerticalLines;
     const float newWidth = newHeight * IdealAspectRatio;
-    _windowDimensions.setHeight(newHeight);
-    _windowDimensions.setWidth(newWidth);
+    _windowDimensions.setHeight(static_cast<int>(newHeight));
+    _windowDimensions.setWidth(static_cast<int>(newWidth));
     _sizeX->setValue(static_cast<int>(newWidth));
     _sizeY->setValue(static_cast<int>(newHeight));
 
@@ -743,6 +760,7 @@ void WindowControl::resetToDefaults() {
     _cylindrical.heightOffset->setValue(DefaultHeightOffset);
     _fisheye.quality->setCurrentIndex(2);
     _fisheye.tilt->setValue(0.0);
+    _fisheye.fov->setValue(180.0);
     _sphericalMirror.quality->setCurrentIndex(2);
     _cylindrical.quality->setCurrentIndex(2);
     _equirectangular.quality->setCurrentIndex(2);
@@ -823,9 +841,9 @@ void WindowControl::generateWindowInformation(sgct::config::Window& window) cons
     switch (static_cast<ProjectionIndices>(_projectionType->currentIndex())) {
         case ProjectionIndices::Fisheye:
             vp.projection = sgct::config::FisheyeProjection {
-                .fov = 180.f,
+                .fov = static_cast<float>(_fisheye.fov->value()),
                 .quality = Quality[_fisheye.quality->currentIndex()].first,
-                .tilt = static_cast<float>(_fisheye.tilt->value())
+                .tilt = static_cast<float>(_fisheye.tilt->value()),
             };
             break;
         case ProjectionIndices::SphericalMirror:
@@ -864,9 +882,9 @@ void WindowControl::generateWindowInformation(sgct::config::Window& window) cons
 
                 // The negative values for left & down are due to SGCT's convention
                 sgct::config::PlanarProjection projection;
-                projection.fov.right = fovH / 2.0;
+                projection.fov.right = static_cast<float>(fovH / 2.0);
                 projection.fov.left = -projection.fov.right;
-                projection.fov.up = fovV / 2.0;
+                projection.fov.up = static_cast<float>(fovV / 2.0);
                 projection.fov.down = -projection.fov.up;
                 vp.projection = projection;
                 break;
@@ -881,9 +899,10 @@ void WindowControl::setProjectionPlanar(float hfov, float vfov) {
     _projectionType->setCurrentIndex(static_cast<int>(ProjectionIndices::Planar));
 }
 
-void WindowControl::setProjectionFisheye(int quality, float tilt) {
+void WindowControl::setProjectionFisheye(int quality, float tilt, float fov) {
     _fisheye.quality->setCurrentIndex(indexForQuality(quality));
     _fisheye.tilt->setValue(tilt);
+    _fisheye.fov->setValue(fov);
     _projectionType->setCurrentIndex(static_cast<int>(ProjectionIndices::Fisheye));
 }
 
@@ -936,11 +955,11 @@ void WindowControl::updateWindowCount(int newWindowCount) {
 void WindowControl::onSizeXChanged(int newValue) {
     _windowDimensions.setWidth(newValue);
     if (_aspectRatioLocked) {
-        const int updatedHeight = _windowDimensions.width() / _aspectRatioSize;
+        const double updatedHeight = _windowDimensions.width() / _aspectRatioSize;
         _sizeY->blockSignals(true);
-        _sizeY->setValue(updatedHeight);
+        _sizeY->setValue(static_cast<int>(updatedHeight));
         _sizeY->blockSignals(false);
-        _windowDimensions.setHeight(updatedHeight);
+        _windowDimensions.setHeight(static_cast<int>(updatedHeight));
     }
     emit windowChanged(_monitor->currentIndex(), _windowIndex, _windowDimensions);
     if (_fovLocked) {
@@ -951,11 +970,11 @@ void WindowControl::onSizeXChanged(int newValue) {
 void WindowControl::onSizeYChanged(int newValue) {
     _windowDimensions.setHeight(newValue);
     if (_aspectRatioLocked) {
-        const int updatedWidth = _windowDimensions.height() * _aspectRatioSize;
+        const double updatedWidth = _windowDimensions.height() * _aspectRatioSize;
         _sizeX->blockSignals(true);
-        _sizeX->setValue(updatedWidth);
+        _sizeX->setValue(static_cast<int>(updatedWidth));
         _sizeX->blockSignals(false);
-        _windowDimensions.setWidth(updatedWidth);
+        _windowDimensions.setWidth(static_cast<int>(updatedWidth));
     }
     emit windowChanged(_monitor->currentIndex(), _windowIndex, _windowDimensions);
     if (_fovLocked) {
@@ -964,14 +983,14 @@ void WindowControl::onSizeYChanged(int newValue) {
 }
 
 void WindowControl::onOffsetXChanged(int newValue) {
-    const float prevWidth = _windowDimensions.width();
+    const int prevWidth = _windowDimensions.width();
     _windowDimensions.setX(newValue);
     _windowDimensions.setWidth(prevWidth);
     emit windowChanged(_monitor->currentIndex(), _windowIndex, _windowDimensions);
 }
 
 void WindowControl::onOffsetYChanged(int newValue) {
-    const float prevHeight = _windowDimensions.height();
+    const int prevHeight = _windowDimensions.height();
     _windowDimensions.setY(newValue);
     _windowDimensions.setHeight(prevHeight);
     emit windowChanged(_monitor->currentIndex(), _windowIndex, _windowDimensions);

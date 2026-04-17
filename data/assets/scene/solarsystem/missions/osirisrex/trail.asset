@@ -1,6 +1,6 @@
 local transforms = asset.require("./transforms")
-local sunTransforms = asset.require("scene/solarsystem/sun/transforms")
-local earthTransforms = asset.require("scene/solarsystem/planets/earth/transforms")
+local sunAsset = asset.require("scene/solarsystem/sun/transforms")
+local earthAsset = asset.require("scene/solarsystem/planets/earth/transforms")
 local kernels = asset.require("./kernels")
 local coreKernels = asset.require("spice/core")
 
@@ -8,7 +8,7 @@ local coreKernels = asset.require("spice/core")
 
 local OsirisRexTrailEarth = {
   Identifier = "OsirisRexTrailEarth",
-  Parent = earthTransforms.EarthIAU.Identifier,
+  Parent = earthAsset.EarthIAU.Identifier,
   Renderable = {
     Type = "RenderableTrailTrajectory",
     Translation = {
@@ -24,13 +24,14 @@ local OsirisRexTrailEarth = {
   },
   GUI = {
     Name = "OSIRIS REx Trail Earth",
-    Path = "/Solar System/Missions/OSIRIS REx"
+    Path = "/Solar System/Missions/OSIRIS REx",
+    Focusable = false
   }
 }
 
 local OsirisRexTrailSolarSystem = {
   Identifier = "OsirisRexTrailSolarSystem",
-  Parent = sunTransforms.SolarSystemBarycenter.Identifier,
+  Parent = sunAsset.SolarSystemBarycenter.Identifier,
   Renderable = {
     Type = "RenderableTrailTrajectory",
     Translation = {
@@ -45,7 +46,8 @@ local OsirisRexTrailSolarSystem = {
   },
   GUI = {
     Name = "OSIRIS REx Trail Solar System",
-    Path = "/Solar System/Missions/OSIRIS REx"
+    Path = "/Solar System/Missions/OSIRIS REx",
+    Focusable = false
   }
 }
 
@@ -66,7 +68,8 @@ local OsirisRexTrailBennu = {
   },
   GUI = {
     Name = "OSIRIS REx Trail Bennu",
-    Path = "/Solar System/Missions/OSIRIS REx"
+    Path = "/Solar System/Missions/OSIRIS REx",
+    Focusable = false
   }
 }
 

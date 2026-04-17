@@ -1,4 +1,4 @@
-local globe = asset.require("../../moon")
+local moonAsset = asset.require("scene/solarsystem/planets/earth/moon/globe")
 
 
 
@@ -16,17 +16,16 @@ local Layer = {
   Enabled = asset.enabled,
   ZIndex = 5,
   FilePath = texturesPath .. "WAC_GLOBAL_E000N0000_032P.png",
-  Description = "Lower Resolution offline version of WAC layer",
-  CacheSettings = { Enabled = false }
+  Description = "Lower Resolution offline version of WAC layer"
 }
 
 
 asset.onInitialize(function()
-  openspace.globebrowsing.addLayer(globe.Moon.Identifier, "ColorLayers", Layer)
+  openspace.globebrowsing.addLayer(moonAsset.Moon.Identifier, "ColorLayers", Layer)
 end)
 
 asset.onDeinitialize(function()
-  openspace.globebrowsing.deleteLayer(globe.Moon.Identifier, "ColorLayers", Layer)
+  openspace.globebrowsing.deleteLayer(moonAsset.Moon.Identifier, "ColorLayers", Layer)
 end)
 
 asset.export("Layer", Layer)

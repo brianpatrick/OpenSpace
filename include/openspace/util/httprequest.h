@@ -2,7 +2,7 @@
  *                                                                                       *
  * OpenSpace                                                                             *
  *                                                                                       *
- * Copyright (c) 2014-2025                                                               *
+ * Copyright (c) 2014-2026                                                               *
  *                                                                                       *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this  *
  * software and associated documentation files (the "Software"), to deal in the Software *
@@ -25,17 +25,19 @@
 #ifndef __OPENSPACE_CORE___HTTPREQUEST___H__
 #define __OPENSPACE_CORE___HTTPREQUEST___H__
 
+#include <ghoul/logging/loglevel.h>
 #include <ghoul/misc/boolean.h>
 #include <atomic>
+#include <chrono>
 #include <condition_variable>
 #include <filesystem>
 #include <fstream>
 #include <functional>
+#include <mutex>
 #include <optional>
 #include <string>
 #include <thread>
 #include <vector>
-#include <chrono>
 
 namespace openspace {
 
@@ -113,10 +115,12 @@ public:
      * provided \p url.
      *
      * \param url The URL that should be requested by this HttpRequest
+     * \param failureVerbosity The verbosity of the log message when the download fails
      *
      * \pre \p url must not be empty
      */
-    explicit HttpRequest(std::string url);
+    explicit HttpRequest(std::string url,
+        ghoul::logging::LogLevel failureVerbosity = ghoul::logging::LogLevel::Error);
 
     /**
      * Registers a callback that will be called when the header for the request has been
@@ -163,7 +167,7 @@ public:
      *
      * \param timeout The amount of time the request will wait before aborting due to the
      *        server not responding. If this value is 0, there is no timeout on the
-     *        request.
+     *        request
      * \return `true` if the request completed successfully, `false` otherwise
      */
     bool perform(std::chrono::milliseconds timeout = std::chrono::milliseconds(0));
@@ -187,6 +191,9 @@ private:
 
     /// The URL that this HttpRequest is going to request
     std::string _url;
+
+    /// The verbosity of the log message that is used if the download fails
+    const ghoul::logging::LogLevel _failureVerbosity;
 };
 
 /**
@@ -205,10 +212,12 @@ public:
      * \p url parameter as soon as the download is #start ed.
      *
      * \param url The URL that should be downloaded by this HttpDownload
+     * \param failureVerbosity The verbosity of the log message when the download fails
      *
      * \pre \p url must not be empty
      */
-    explicit HttpDownload(std::string url);
+    explicit HttpDownload(std::string url,
+        ghoul::logging::LogLevel failureVerbosity = ghoul::logging::LogLevel::Error);
 
     /**
      * Virtual destructor that will cancel the ongoing download and block until the
@@ -293,8 +302,8 @@ protected:
      * \param buffer The beginning of the buffer of this chunk of data
      * \param size The number of bytes that the \p buffer contains
      * \return The implementation should return `true` if the downloading should continue
-     *         and `false` if the handling of the data caused some error that the
-     *         subclass is incapable of recovering from
+     *         and `false` if the handling of the data caused some error that the subclass
+     *         is incapable of recovering from
      */
     virtual bool handleData(char* buffer, size_t size) = 0;
 
@@ -306,8 +315,8 @@ protected:
      * error occurred that will cause the download to be terminated. This function will be
      * called on a different thread from the one that called the #start method.
      *
-     * \return `true` if the setup completed successfully and `false` if the setup
-     *         failed unrecoverably
+     * \return `true` if the setup completed successfully and `false` if the setup failed
+     *         unrecoverably
      */
     virtual bool setup();
 
@@ -367,13 +376,14 @@ public:
      * Overwrite::Yes, the existing content at the \p destinationPath will be overwritten.
      */
     HttpFileDownload(std::string url, std::filesystem::path destinationPath,
-        Overwrite overwrite = Overwrite::No);
+        Overwrite overwrite = Overwrite::No,
+        ghoul::logging::LogLevel failureVerbosity = ghoul::logging::LogLevel::Error);
 
     /**
      * This destructor will cancel any ongoing download and wait for its completion, so it
      * might not block for a short amount of time.
      */
-    virtual ~HttpFileDownload() override = default;
+    ~HttpFileDownload() override = default;
 
     /**
      * Returns the path where the contents of the URL provided in the constructor will be
@@ -440,14 +450,16 @@ public:
      * \p url into memory.
      *
      * \param url The URL whose contents should be downloaded
+     * \param failureVerbosity The level at which error should be logged if they appear
      */
-    explicit HttpMemoryDownload(std::string url);
+    explicit HttpMemoryDownload(std::string url,
+        ghoul::logging::LogLevel failureVerbosity = ghoul::logging::LogLevel::Error);
 
     /**
      * This destructor will cancel any ongoing download and wait for its completion, so it
      * might not block for a short amount of time.
      */
-    virtual ~HttpMemoryDownload() override = default;
+    ~HttpMemoryDownload() override = default;
 
     /**
      * Returns a reference to the buffer that is used to store the contents of the URL

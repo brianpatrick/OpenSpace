@@ -2,7 +2,7 @@
  *                                                                                       *
  * OpenSpace                                                                             *
  *                                                                                       *
- * Copyright (c) 2014-2025                                                               *
+ * Copyright (c) 2014-2026                                                               *
  *                                                                                       *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this  *
  * software and associated documentation files (the "Software"), to deal in the Software *
@@ -38,8 +38,8 @@
 
 namespace openspace {
 
-class WebRenderHandler;
 class WebKeyboardHandler;
+class WebRenderHandler;
 
 class BrowserClient : public CefClient {
 public:
@@ -65,7 +65,7 @@ public:
     // TODO (ylvse 2025-02-18): Update CEF when they have fixed this issue
     // https://github.com/chromiumembedded/cef/issues/3870
     class FocusHandler : public CefFocusHandler {
-        void OnTakeFocus(CefRefPtr<CefBrowser>, bool) override; 
+        void OnTakeFocus(CefRefPtr<CefBrowser>, bool) override;
         bool OnSetFocus(CefRefPtr<CefBrowser>, FocusSource) override;
 
         IMPLEMENT_REFCOUNTING(FocusHandler);
@@ -73,7 +73,7 @@ public:
 
     class LoadHandler : public CefLoadHandler {
         void OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame>, int) override;
-     
+
         IMPLEMENT_REFCOUNTING(LoadHandler);
     };
 

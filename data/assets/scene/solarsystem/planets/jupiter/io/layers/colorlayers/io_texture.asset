@@ -1,4 +1,4 @@
-local globe = asset.require("../../io")
+local ioAsset = asset.require("scene/solarsystem/planets/jupiter/io/globe")
 
 
 
@@ -14,17 +14,16 @@ local Layer = {
   Identifier = "Texture",
   FilePath = texturesPath .. "io.jpg",
   Enabled = asset.enabled,
-  ZIndex = 5,
-  CacheSettings = { Enabled = false }
+  ZIndex = 5
 }
 
 
 asset.onInitialize(function()
-  openspace.globebrowsing.addLayer(globe.Io.Identifier, "ColorLayers", Layer)
+  openspace.globebrowsing.addLayer(ioAsset.Io.Identifier, "ColorLayers", Layer)
 end)
 
 asset.onDeinitialize(function()
-  openspace.globebrowsing.deleteLayer(globe.Io.Identifier, "ColorLayers", Layer)
+  openspace.globebrowsing.deleteLayer(ioAsset.Io.Identifier, "ColorLayers", Layer)
 end)
 
 asset.export("layer", Layer)

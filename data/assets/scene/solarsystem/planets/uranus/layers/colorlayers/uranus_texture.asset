@@ -1,4 +1,4 @@
-local globe = asset.require("../../uranus")
+local uranusAsset = asset.require("scene/solarsystem/planets/uranus/globe")
 
 
 
@@ -14,17 +14,16 @@ local Layer = {
   Identifier = "Texture",
   FilePath = texturesPath .. "uranus.jpg",
   Enabled = asset.enabled,
-  ZIndex = 5,
-  CacheSettings = { Enabled = false }
+  ZIndex = 5
 }
 
 
 asset.onInitialize(function()
-  openspace.globebrowsing.addLayer(globe.Uranus.Identifier, "ColorLayers", Layer)
+  openspace.globebrowsing.addLayer(uranusAsset.Uranus.Identifier, "ColorLayers", Layer)
 end)
 
 asset.onDeinitialize(function()
-  openspace.globebrowsing.deleteLayer(globe.Uranus.Identifier, "ColorLayers", Layer)
+  openspace.globebrowsing.deleteLayer(uranusAsset.Uranus.Identifier, "ColorLayers", Layer)
 end)
 
 asset.export("layer", Layer)

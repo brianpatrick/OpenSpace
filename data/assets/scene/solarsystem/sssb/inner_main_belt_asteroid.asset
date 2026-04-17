@@ -17,7 +17,6 @@ local Object = {
     Type = "RenderableOrbitalKepler",
     Path = sssb .. "sssb_data_inner_main_belt_asteroid.csv",
     Format = "SBDB",
-    Segments = 200,
     SegmentQuality = 1,
     Color = { 1.0, 1.0, 0.0 },
     TrailFade = 0.5,
@@ -26,6 +25,7 @@ local Object = {
   GUI = {
     Name = "Inner Main Asteroid Belt",
     Path = "/Solar System/Small Bodies",
+    Focusable = false,
     Description = [[Asteroids with a semi-major axis less than 2.0 AU and a perihelion
       distance greater than 1.666 AU.]]
   }

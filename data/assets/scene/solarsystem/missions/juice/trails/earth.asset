@@ -1,4 +1,4 @@
-local transforms = asset.require("scene/solarsystem/planets/earth/transforms")
+local earthAsset = asset.require("scene/solarsystem/planets/earth/transforms")
 local kernels = asset.require("../kernels")
 local coreKernels = asset.require("spice/core")
 
@@ -6,7 +6,7 @@ local coreKernels = asset.require("spice/core")
 
 local JuiceTrailEarth = {
   Identifier = "JuiceTrailEarth",
-  Parent = transforms.EarthBarycenter.Identifier,
+  Parent = earthAsset.EarthBarycenter.Identifier,
   Renderable = {
     Type = "RenderableTrailTrajectory",
     Translation = {
@@ -22,6 +22,7 @@ local JuiceTrailEarth = {
   GUI = {
     Name = "Juice Trail (Earth)",
     Path = "/Solar System/Missions/Juice",
+    Focusable = false,
     Description = "Juice's trajectory relative to the Earth barycenter"
   }
 }

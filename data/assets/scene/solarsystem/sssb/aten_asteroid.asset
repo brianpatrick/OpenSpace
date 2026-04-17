@@ -17,7 +17,6 @@ local Object = {
     Type = "RenderableOrbitalKepler",
     Path = sssb .. "sssb_data_aten_asteroid.csv",
     Format = "SBDB",
-    Segments = 200,
     SegmentQuality = 2,
     Color = { 0.15, 0.15, 1.0 },
     TrailFade = 18,
@@ -26,6 +25,7 @@ local Object = {
   GUI = {
     Name = "Aten Asteroids",
     Path = "/Solar System/Small Bodies",
+    Focusable = false,
     Description = [[Earth-crossing Near-Earth-Asteroids with semi-major axes smaller than
       Earth's.]]
   }

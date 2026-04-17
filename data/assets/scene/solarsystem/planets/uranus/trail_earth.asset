@@ -1,17 +1,18 @@
-local transforms = asset.require("scene/solarsystem/planets/earth/transforms")
+local earthAsset = asset.require("scene/solarsystem/planets/earth/transforms")
 local coreKernels = asset.require("spice/core")
+local uranusKernels = asset.require("./kernels")
 
 
 
 local UranusTrailEarth = {
   Identifier = "UranusTrailEarth",
-  Parent = transforms.EarthBarycenter.Identifier,
+  Parent = earthAsset.EarthBarycenter.Identifier,
   Renderable = {
     Type = "RenderableTrailOrbit",
     Enabled = false,
     Translation = {
       Type = "SpiceTranslation",
-      Target = coreKernels.ID.Uranus,
+      Target = uranusKernels.ID.Uranus,
       Observer = coreKernels.ID.Earth
     },
     Color = { 0.6, 0.95, 1.0 },
@@ -22,6 +23,7 @@ local UranusTrailEarth = {
   GUI = {
     Name = "Uranus trail from Earth",
     Path = "/Solar System/Planets/Uranus",
+    Focusable = false,
     Description = "Trail of Uranus as observed by the Earth"
   }
 }

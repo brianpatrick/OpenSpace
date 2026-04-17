@@ -1,4 +1,4 @@
-local transforms = asset.require("scene/solarsystem/sun/transforms")
+local sunAsset = asset.require("scene/solarsystem/sun/transforms")
 local kernels = asset.require("./kernels")
 local coreKernels = asset.require("spice/core")
 
@@ -6,7 +6,7 @@ local coreKernels = asset.require("spice/core")
 
 local L2Position = {
   Identifier = "L2Position",
-  Parent = transforms.SolarSystemBarycenter.Identifier,
+  Parent = sunAsset.SolarSystemBarycenter.Identifier,
   Transform = {
     Translation = {
       Type = "SpiceTranslation",
@@ -18,6 +18,7 @@ local L2Position = {
   GUI = {
     Name = "L2 Position",
     Path = "/Solar System/Planets/Earth/Lagrange Points",
+    Focusable = false,
     Hidden = true
   }
 }
@@ -38,6 +39,7 @@ local L2CoRevFrame = {
   GUI = {
     Name = "L2 Co-revolving Reference Frame",
     Path = "/Solar System/Planets/Earth/Lagrange Points",
+    Focusable = false,
     Hidden = true
   }
 }

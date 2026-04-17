@@ -2,7 +2,7 @@
  *                                                                                       *
  * OpenSpace                                                                             *
  *                                                                                       *
- * Copyright (c) 2014-2025                                                               *
+ * Copyright (c) 2014-2026                                                               *
  *                                                                                       *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this  *
  * software and associated documentation files (the "Software"), to deal in the Software *
@@ -25,32 +25,33 @@
 #include <modules/base/lightsource/cameralightsource.h>
 
 #include <openspace/documentation/documentation.h>
-#include <openspace/documentation/verifier.h>
 #include <openspace/util/updatestructures.h>
+#include <ghoul/misc/dictionary.h>
 #include <optional>
 
 namespace {
-    constexpr openspace::properties::Property::PropertyInfo IntensityInfo = {
+    using namespace openspace;
+
+    constexpr Property::PropertyInfo IntensityInfo = {
         "Intensity",
         "Intensity",
         "The intensity of this light source.",
-        openspace::properties::Property::Visibility::NoviceUser
+        Property::Visibility::NoviceUser
     };
 
-    // This `LightSource` type represents a light source placed at the position of the
-    // camera. An object with this light source will always be illuminated from the
-    // current view direction.
+    // Represents a light source placed at the position of the camera. An object with
+    // this light source will always be illuminated from the current view direction.
     struct [[codegen::Dictionary(CameraLightSource)]] Parameters {
         // [[codegen::verbatim(IntensityInfo.description)]]
         std::optional<float> intensity;
     };
-#include "cameralightsource_codegen.cpp"
 } // namespace
+#include "cameralightsource_codegen.cpp"
 
 namespace openspace {
 
-documentation::Documentation CameraLightSource::Documentation() {
-    return codegen::doc<Parameters>("base_camera_light_source");
+Documentation CameraLightSource::Documentation() {
+    return codegen::doc<Parameters>("base_lightsource_camera");
 }
 
 CameraLightSource::CameraLightSource(const ghoul::Dictionary& dictionary)

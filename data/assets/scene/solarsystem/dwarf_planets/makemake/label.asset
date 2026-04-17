@@ -2,9 +2,9 @@ local transforms = asset.require("./transforms")
 
 
 
-local Label = {
+local MakemakeLabel = {
   Identifier = "MakemakeLabel",
-  Parent = transforms.Position.Identifier,
+  Parent = transforms.MakemakePosition.Identifier,
   Renderable = {
     Type = "RenderableLabel",
     Enabled = asset.enabled,
@@ -23,20 +23,21 @@ local Label = {
   GUI = {
     Name = "Makemake Label",
     Path = "/Solar System/Dwarf Planets/Makemake",
+    Focusable = false,
     Description = "Label for Makemake, visible at the solarsystem overview zoom level"
   }
 }
 
 
 asset.onInitialize(function()
-  openspace.addSceneGraphNode(Label)
+  openspace.addSceneGraphNode(MakemakeLabel)
 end)
 
 asset.onDeinitialize(function()
-  openspace.removeSceneGraphNode(Label)
+  openspace.removeSceneGraphNode(MakemakeLabel)
 end)
 
-asset.export("Label", Label)
+asset.export(MakemakeLabel)
 
 
 

@@ -2,7 +2,7 @@
  *                                                                                       *
  * OpenSpace                                                                             *
  *                                                                                       *
- * Copyright (c) 2014-2025                                                               *
+ * Copyright (c) 2014-2026                                                               *
  *                                                                                       *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this  *
  * software and associated documentation files (the "Software"), to deal in the Software *
@@ -26,42 +26,45 @@
 
 #include <modules/spacecraftinstruments/util/imagesequencer.h>
 #include <openspace/documentation/documentation.h>
-#include <openspace/documentation/verifier.h>
 #include <openspace/engine/globals.h>
-#include <openspace/rendering/renderengine.h>
 #include <openspace/util/spicemanager.h>
 #include <openspace/util/timeconversion.h>
 #include <openspace/util/timemanager.h>
 #include <ghoul/font/font.h>
-#include <ghoul/font/fontmanager.h>
 #include <ghoul/font/fontrenderer.h>
+#include <ghoul/format.h>
+#include <ghoul/misc/dictionary.h>
 #include <ghoul/misc/profiling.h>
+#include <algorithm>
 #include <chrono>
+#include <optional>
+#include <utility>
 
 namespace {
-    constexpr openspace::properties::Property::PropertyInfo ActiveColorInfo = {
+    using namespace openspace;
+
+    constexpr Property::PropertyInfo ActiveColorInfo = {
         "ActiveColor",
-        "Active Color",
+        "Active color",
         "This value determines the color that the active instrument is rendered in. "
         "Shortly after activation, the used color is mixture of this and the flash "
         "color. The default value is (0.6, 1.0, 0.0).",
-        openspace::properties::Property::Visibility::User
+        Property::Visibility::User
     };
 
-    constexpr openspace::properties::Property::PropertyInfo FlashColorInfo = {
+    constexpr Property::PropertyInfo FlashColorInfo = {
         "FlashColor",
-        "Flash Color",
+        "Flash color",
         "This value determines the color that is used shortly after an instrument "
         "activation. The default value is (0.9, 1.0, 0.75).",
-        openspace::properties::Property::Visibility::User
+        Property::Visibility::User
     };
 
-    // This dashboard item shows information about the status of individual instruments
-    // onboard a spacecraft with regards to upcoming image capture. An image sequence has
-    // to be registered in order to be able to show the necessary information. The
-    // dashboard item shows a visual representation on how much time has passed since the
-    // previous image capture and how much time remains until the instrument captures the
-    // next image.
+    // Shows information about the status of individual instruments onboard a spacecraft
+    // with regards to upcoming image capture. An image sequence has to be registered in
+    // order to be able to show the necessary information. The dashboard item shows a
+    // visual representation on how much time has passed since the previous image capture
+    // and how much time remains until the instrument captures the next image.
     struct [[codegen::Dictionary(DashboardItemInstruments)]] Parameters {
         // [[codegen::verbatim(ActiveColorInfo.description)]]
         std::optional<glm::vec3> activeColor [[codegen::color()]];
@@ -69,12 +72,12 @@ namespace {
         // [[codegen::verbatim(FlashColorInfo.description)]]
         std::optional<glm::vec3> flashColor [[codegen::color()]];
     };
-#include "dashboarditeminstruments_codegen.cpp"
 } // namespace
+#include "dashboarditeminstruments_codegen.cpp"
 
 namespace openspace {
 
-documentation::Documentation DashboardItemInstruments::Documentation() {
+Documentation DashboardItemInstruments::Documentation() {
     return codegen::doc<Parameters>(
         "spacecraftinstruments_dashboarditem_instuments",
         DashboardTextItem::Documentation()
@@ -97,10 +100,10 @@ DashboardItemInstruments::DashboardItemInstruments(const ghoul::Dictionary& dict
 {
     const Parameters p = codegen::bake<Parameters>(dictionary);
 
-    _activeColor.setViewOption(properties::Property::ViewOptions::Color);
+    _activeColor.setViewOption(Property::ViewOptions::Color);
     _activeColor = p.activeColor.value_or(_activeColor);
     addProperty(_activeColor);
-    _activeFlash.setViewOption(properties::Property::ViewOptions::Color);
+    _activeFlash.setViewOption(Property::ViewOptions::Color);
     _activeFlash = p.flashColor.value_or(_activeFlash);
     addProperty(_activeFlash);
 }
@@ -119,7 +122,7 @@ void DashboardItemInstruments::render(glm::vec2& penPosition) {
 
     penPosition.y -= _font->height();
 
-    constexpr glm::vec4 targetColor(0.f, 0.75f, 1.f, 1.f);
+    constexpr glm::vec4 targetColor = glm::vec4(0.f, 0.75f, 1.f, 1.f);
 
     const double previous = sequencer.prevCaptureTime(currentTime);
     const double next = sequencer.nextCaptureTime(currentTime);

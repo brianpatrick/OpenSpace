@@ -1,9 +1,10 @@
 asset.require("./misc/brightest")
 asset.require("./communications/geostationary")
+asset.require("./communications/starlink")
 asset.require("./navigation/gps")
 asset.require("./misc/spacestations")
-asset.require("./misc/iss")
-asset.require("./misc/tiangong")
+asset.require("./iss/iss")
+asset.require("./tiangong/tiangong")
 asset.require("./misc/tle-new")
 
 

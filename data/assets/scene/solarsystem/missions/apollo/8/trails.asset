@@ -1,5 +1,5 @@
-local earth_transforms = asset.require("scene/solarsystem/planets/earth/transforms")
-local moon_transforms = asset.require("scene/solarsystem/planets/earth/moon/moon")
+local earthAsset = asset.require("scene/solarsystem/planets/earth/transforms")
+local moonAsset = asset.require("scene/solarsystem/planets/earth/moon/globe")
 local kernels = asset.require("./kernels")
 local coreKernels = asset.require("spice/core")
 
@@ -7,7 +7,7 @@ local coreKernels = asset.require("spice/core")
 
 local LaunchTrail = {
   Identifier = "Apollo8LaunchTrail",
-  Parent = earth_transforms.EarthIAU.Identifier,
+  Parent = earthAsset.EarthIAU.Identifier,
   Renderable = {
     Type = "RenderableTrailTrajectory",
     Translation = {
@@ -24,13 +24,14 @@ local LaunchTrail = {
   },
   GUI = {
     Name = "Apollo 8 Launch Trail",
-    Path = "/Solar System/Missions/Apollo/8"
+    Path = "/Solar System/Missions/Apollo/8",
+    Focusable = false
   }
 }
 
 local MoonTrail = {
   Identifier = "Apollo8MoonTrail",
-  Parent = moon_transforms.Moon.Identifier,
+  Parent = moonAsset.Moon.Identifier,
   Renderable = {
     Type = "RenderableTrailTrajectory",
     Enabled = false,
@@ -47,13 +48,14 @@ local MoonTrail = {
   },
   GUI = {
     Name = "Apollo 8 Moon Trail",
-    Path = "/Solar System/Missions/Apollo/8"
+    Path = "/Solar System/Missions/Apollo/8",
+    Focusable = false
   }
 }
 
 local EarthBarycenterTrail = {
   Identifier = "Apollo8EarthBarycenterTrail",
-  Parent = earth_transforms.EarthCenter.Identifier,
+  Parent = earthAsset.EarthCenter.Identifier,
   Renderable = {
     Type = "RenderableTrailTrajectory",
     Enabled = false,
@@ -70,7 +72,8 @@ local EarthBarycenterTrail = {
   },
   GUI = {
     Name = "Apollo 8 Earth Barycenter Trail",
-    Path = "/Solar System/Missions/Apollo/8"
+    Path = "/Solar System/Missions/Apollo/8",
+    Focusable = false
   }
 }
 

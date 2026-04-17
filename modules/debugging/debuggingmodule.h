@@ -2,7 +2,7 @@
  *                                                                                       *
  * OpenSpace                                                                             *
  *                                                                                       *
- * Copyright (c) 2014-2025                                                               *
+ * Copyright (c) 2014-2026                                                               *
  *                                                                                       *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this  *
  * software and associated documentation files (the "Software"), to deal in the Software *
@@ -29,6 +29,7 @@
 
 #include <openspace/properties/scalar/boolproperty.h>
 #include <openspace/properties/scalar/floatproperty.h>
+#include <openspace/properties/vector/vec2property.h>
 #include <ghoul/font/font.h>
 
 namespace openspace {
@@ -39,18 +40,19 @@ public:
 
     DebuggingModule();
 
-    std::vector<documentation::Documentation> documentations() const override;
+    std::vector<openspace::Documentation> documentations() const override;
 
-    scripting::LuaLibrary luaLibrary() const override;
+    LuaLibrary luaLibrary() const override;
 
 protected:
     void internalInitialize(const ghoul::Dictionary&) override;
     void internalInitializeGL() override;
 
 private:
-    properties::BoolProperty _showStatistics;
-    properties::FloatProperty _statisticsScale;
-    properties::BoolProperty _showFrameInformation;
+    BoolProperty _showStatistics;
+    FloatProperty _statisticsScale;
+    Vec2Property _statisticsOffset;
+    BoolProperty _showFrameInformation;
 
     std::shared_ptr<ghoul::fontrendering::Font> _fontFrameInfo;
 };

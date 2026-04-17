@@ -1,4 +1,4 @@
-local globe = asset.require("../../neptune")
+local neptuneAsset = asset.require("scene/solarsystem/planets/neptune/globe")
 
 
 
@@ -14,17 +14,16 @@ local Layer = {
   Identifier = "Texture",
   FilePath = texturesPath .. "neptune.jpg",
   Enabled = asset.enabled,
-  ZIndex = 5,
-  CacheSettings = { Enabled = false }
+  ZIndex = 5
 }
 
 
 asset.onInitialize(function()
-  openspace.globebrowsing.addLayer(globe.Neptune.Identifier, "ColorLayers", Layer)
+  openspace.globebrowsing.addLayer(neptuneAsset.Neptune.Identifier, "ColorLayers", Layer)
 end)
 
 asset.onDeinitialize(function()
-  openspace.globebrowsing.deleteLayer(globe.Neptune.Identifier, "ColorLayers", Layer)
+  openspace.globebrowsing.deleteLayer(neptuneAsset.Neptune.Identifier, "ColorLayers", Layer)
 end)
 
 asset.export("layer", Layer)

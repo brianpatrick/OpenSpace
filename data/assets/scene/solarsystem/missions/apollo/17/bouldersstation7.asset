@@ -1,5 +1,5 @@
-local sun = asset.require("scene/solarsystem/sun/transforms")
-local moonAsset = asset.require("scene/solarsystem/planets/earth/moon/moon")
+local sunAsset = asset.require("scene/solarsystem/sun/transforms")
+local moonAsset = asset.require("scene/solarsystem/planets/earth/moon/globe")
 
 
 
@@ -11,8 +11,8 @@ local models = asset.resource({
 })
 
 
-local Station7BoulderHolder = {
-  Identifier = "Station_7_Boulder",
+local Station7Boulder = {
+  Identifier = "Apollo17Station7Boulder",
   Parent = moonAsset.Moon.Identifier,
   Transform = {
     Translation = {
@@ -22,18 +22,7 @@ local Station7BoulderHolder = {
       Latitude = 20.2908556,
       Altitude = -2593.5,
       UseHeightMap = true
-    }
-  },
-  GUI = {
-    Name = "Station 7 Boulder",
-    Path = "/Solar System/Missions/Apollo/17/Station 7"
-  }
-}
-
-local Station7BoulderModel = {
-  Identifier = "Station7BoulderModel",
-  Parent = Station7BoulderHolder.Identifier,
-  Transform = {
+    },
     Scale = {
       Type = "StaticScale",
       Scale = 0.1
@@ -44,7 +33,7 @@ local Station7BoulderModel = {
     GeometryFile = models .. "b7model.obj",
     RotationVector = { 1.945950, 274.378387, 212.903214 },
     LightSources = {
-      sun.LightSource,
+      sunAsset.LightSource,
       {
         Identifier = "Camera",
         Type = "CameraLightSource",
@@ -55,24 +44,21 @@ local Station7BoulderModel = {
     EnableFaceCulling = false
   },
   GUI = {
-    Name = "Station 7 Boulder Model",
+    Name = "Station 7 Boulder",
     Path = "/Solar System/Missions/Apollo/17/Station 7"
   }
 }
 
 
 asset.onInitialize(function()
-  openspace.addSceneGraphNode(Station7BoulderHolder)
-  openspace.addSceneGraphNode(Station7BoulderModel)
+  openspace.addSceneGraphNode(Station7Boulder)
 end)
 
 asset.onDeinitialize(function()
-  openspace.removeSceneGraphNode(Station7BoulderModel)
-  openspace.removeSceneGraphNode(Station7BoulderHolder)
+  openspace.removeSceneGraphNode(Station7Boulder)
 end)
 
-asset.export(Station7BoulderHolder)
-asset.export(Station7BoulderModel)
+asset.export(Station7Boulder)
 
 
 

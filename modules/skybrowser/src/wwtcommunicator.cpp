@@ -2,7 +2,7 @@
  *                                                                                       *
  * OpenSpace                                                                             *
  *                                                                                       *
- * Copyright (c) 2014-2025                                                               *
+ * Copyright (c) 2014-2026                                                               *
  *                                                                                       *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this  *
  * software and associated documentation files (the "Software"), to deal in the Software *
@@ -25,11 +25,11 @@
 #include <modules/skybrowser/include/wwtcommunicator.h>
 
 #include <modules/webbrowser/include/browserinstance.h>
-#include <modules/skybrowser/include/utility.h>
-#include <modules/webbrowser/include/webkeyboardhandler.h>
-#include <modules/webbrowser/webbrowsermodule.h>
+#include <ghoul/format.h>
+#include <ghoul/misc/dictionary.h>
 #include <ghoul/misc/dictionaryjsonformatter.h>
-#include <deque>
+#include <algorithm>
+#include <iterator>
 
 namespace {
     // WWT messages
@@ -93,8 +93,8 @@ namespace {
     ghoul::Dictionary setLayerOrderMessage(const std::string& imageUrl, int order) {
         static int MessageCounter = 0;
 
-        // The lower the layer order, the more towards the back the image is placed
-        // 0 is the background
+        // The lower the layer order, the more towards the back the image is placed 0 is
+        // the background
         using namespace std::string_literals;
 
         ghoul::Dictionary msg;
@@ -106,53 +106,12 @@ namespace {
         MessageCounter++;
         return msg;
     }
-
-    constexpr openspace::properties::Property::PropertyInfo VerticalFovInfo = {
-        "VerticalFov",
-        "Vertical Field Of View",
-        "The vertical field of view of the target.",
-        openspace::properties::Property::Visibility::AdvancedUser
-    };
-
-    struct [[codegen::Dictionary(WwtCommunicator)]] Parameters {
-        // [[codegen::verbatim(VerticalFovInfo.description)]]
-        std::optional<double> verticalFov;
-    };
-    #include "wwtcommunicator_codegen.cpp"
 } // namespace
 
 namespace openspace {
 
-WwtCommunicator::WwtCommunicator(const ghoul::Dictionary& dictionary)
-    : Browser(dictionary)
-    , _verticalFov(VerticalFovInfo, 10.0, 0.00000000001, 70.0)
-{
-    // Handle target dimension property
-    const Parameters p = codegen::bake<Parameters>(dictionary);
-    _verticalFov = p.verticalFov.value_or(_verticalFov);
-    _verticalFov.setReadOnly(true);
-}
-
-void WwtCommunicator::update() {
-    // Cap how messages are passed
-    const std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-    const std::chrono::system_clock::duration timeSinceLastUpdate = now - _lastUpdateTime;
-
-    if (timeSinceLastUpdate > TimeUpdateInterval) {
-        if (_equatorialAimIsDirty) {
-            updateAim();
-            _equatorialAimIsDirty = false;
-        }
-        if (_borderColorIsDirty) {
-            updateBorderColor();
-            _borderColorIsDirty = false;
-        }
-        _lastUpdateTime = std::chrono::system_clock::now();
-    }
-    if (_shouldReload) {
-        _isImageCollectionLoaded = false;
-    }
-    Browser::update();
+WwtCommunicator::WwtCommunicator(BrowserInstance* browserInstance) {
+    _browserInstance = browserInstance;
 }
 
 void WwtCommunicator::selectImage(const std::string& url) {
@@ -163,7 +122,7 @@ void WwtCommunicator::selectImage(const std::string& url) {
         // Push newly selected image to front
         _selectedImages.emplace_front(url, 1.0);
 
-        // If wwt has not loaded the collection yet, wait with passing the message
+        // If WWT has not loaded the collection yet, wait with passing the message
         if (_isImageCollectionLoaded) {
             addImageLayerToWwt(url);
         }
@@ -214,64 +173,30 @@ std::vector<double> WwtCommunicator::opacities() const {
     return opacities;
 }
 
-double WwtCommunicator::borderRadius() const {
-    return _borderRadius;
-}
-
-void WwtCommunicator::setTargetRoll(double roll) {
-    _targetRoll = roll;
-}
-
-void WwtCommunicator::setVerticalFov(double vfov) {
-    _verticalFov = vfov;
-    _equatorialAimIsDirty = true;
-}
-
-void WwtCommunicator::setEquatorialAim(glm::dvec2 equatorial) {
-    _equatorialAim = std::move(equatorial);
-    _equatorialAimIsDirty = true;
-}
-
-void WwtCommunicator::setBorderColor(glm::ivec3 color) {
-    _wwtBorderColor = std::move(color);
-    _borderColorIsDirty = true;
-}
-
 void WwtCommunicator::setBorderRadius(double radius) {
-    _borderRadius = radius;
     const std::string scr = std::format("setBorderRadius({});", radius);
     executeJavascript(scr);
 }
 
-void WwtCommunicator::updateBorderColor() const {
+void WwtCommunicator::setBorderColor(glm::ivec3 color) {
     const std::string script = std::format(
         "setBackgroundColor('rgb({},{},{})');",
-        _wwtBorderColor.x, _wwtBorderColor.y, _wwtBorderColor.z
+        color.x, color.y, color.z
     );
     executeJavascript(script);
 }
 
-void WwtCommunicator::updateAim() const {
+void WwtCommunicator::setAim(glm::dvec2 equatorialAim, double vFov, double roll) {
     // Message WorldWide Telescope current view
-    const ghoul::Dictionary msg = moveCameraMessage(
-        _equatorialAim,
-        _verticalFov,
-        _targetRoll
-    );
+    const ghoul::Dictionary msg = moveCameraMessage(equatorialAim, vFov, roll);
     sendMessageToWwt(msg);
-}
-
-glm::dvec2 WwtCommunicator::fieldsOfView() const {
-    const double vFov = verticalFov();
-    const double hFov = vFov * browserRatio();
-    return glm::dvec2(hFov, vFov);
 }
 
 bool WwtCommunicator::isImageCollectionLoaded() const {
     return _isImageCollectionLoaded;
 }
 
-SelectedImageDeque::iterator WwtCommunicator::findSelectedImage(
+std::deque<std::pair<std::string, double>>::iterator WwtCommunicator::findSelectedImage(
                                                               const std::string& imageUrl)
 {
     auto it = std::find_if(
@@ -282,10 +207,6 @@ SelectedImageDeque::iterator WwtCommunicator::findSelectedImage(
         }
     );
     return it;
-}
-
-glm::dvec2 WwtCommunicator::equatorialAim() const {
-    return _equatorialAim;
 }
 
 void WwtCommunicator::setImageOrder(const std::string& imageUrl, int order) {
@@ -351,12 +272,16 @@ void WwtCommunicator::setIdInBrowser(const std::string& id) const {
     executeJavascript(std::format("setId('{}')", id));
 }
 
-glm::ivec3 WwtCommunicator::borderColor() const {
-    return _wwtBorderColor;
-}
+void WwtCommunicator::executeJavascript(const std::string& script) const {
+    // Make sure that the browser has a main frame
+    const bool browserExists = _browserInstance && _browserInstance->getBrowser();
+    const bool frameIsLoaded =
+        browserExists && _browserInstance->getBrowser()->GetMainFrame();
 
-double WwtCommunicator::verticalFov() const {
-    return _verticalFov;
+    if (frameIsLoaded) {
+        const CefRefPtr<CefFrame> frame = _browserInstance->getBrowser()->GetMainFrame();
+        frame->ExecuteJavaScript(script, frame->GetURL(), 0);
+    }
 }
 
 } // namespace openspace

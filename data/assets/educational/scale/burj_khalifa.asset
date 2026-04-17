@@ -1,4 +1,4 @@
-local earthAsset = asset.require("scene/solarsystem/planets/earth/earth")
+local earthAsset = asset.require("scene/solarsystem/planets/earth/globe")
 local sunAsset = asset.require("scene/solarsystem/sun/transforms")
 
 
@@ -7,7 +7,7 @@ local modelFolder = asset.resource({
   Name = "Scale Model Burj Khalifa",
   Type = "HttpSynchronization",
   Identifier = "scale_model_burj_khalifa",
-  Version = 1
+  Version = 2
 })
 
 

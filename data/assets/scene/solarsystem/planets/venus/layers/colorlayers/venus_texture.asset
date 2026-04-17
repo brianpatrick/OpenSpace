@@ -1,4 +1,4 @@
-local globe = asset.require("../../venus")
+local venusAsset = asset.require("scene/solarsystem/planets/venus/globe")
 
 
 
@@ -14,8 +14,7 @@ local Clouds = {
   Identifier = "Clouds",
   FilePath = texturesPath .. "venus_clouds.jpg",
   Enabled = asset.enabled,
-  ZIndex = 20,
-  CacheSettings = { Enabled = false }
+  ZIndex = 20
 }
 
 local Layer = {
@@ -26,19 +25,18 @@ local Layer = {
   Settings = {
     Opacity = 0.48,
     Gamma = 0.48
-  },
-  CacheSettings = { Enabled = false }
+  }
 }
 
 
 asset.onInitialize(function()
-  openspace.globebrowsing.addLayer(globe.Venus.Identifier, "ColorLayers", Clouds)
-  openspace.globebrowsing.addLayer(globe.Venus.Identifier, "ColorLayers", Layer)
+  openspace.globebrowsing.addLayer(venusAsset.Venus.Identifier, "ColorLayers", Clouds)
+  openspace.globebrowsing.addLayer(venusAsset.Venus.Identifier, "ColorLayers", Layer)
 end)
 
 asset.onDeinitialize(function()
-  openspace.globebrowsing.deleteLayer(globe.Venus.Identifier, "ColorLayers", Layer)
-  openspace.globebrowsing.deleteLayer(globe.Venus.Identifier, "ColorLayers", Clouds)
+  openspace.globebrowsing.deleteLayer(venusAsset.Venus.Identifier, "ColorLayers", Layer)
+  openspace.globebrowsing.deleteLayer(venusAsset.Venus.Identifier, "ColorLayers", Clouds)
 end)
 
 asset.export(Layer)

@@ -6,6 +6,19 @@
     "scene/solarsystem/telescopes/euclid/euclid",
     "scene/solarsystem/planets/earth/earth"
   ],
+  "addons": {
+    "custom": [
+      {
+        "version": { "major": 1, "minor": 0 },
+        "identifier": "l2_spacecraft",
+        "name": "Spacecraft in L2",
+        "description": "Includes other spacecraft that are in the Earth's L2 orbit.",
+        "assets": [
+          "scene/solarsystem/telescopes/jwst/jwst"
+        ]
+      }
+    ]
+  },
   "camera": {
     "anchor": "Euclid",
     "type": "goToNode"
@@ -39,7 +52,7 @@
   ],
   "meta": {
     "author": "OpenSpace Team",
-    "description": "A profile showing the trajectory of ESA's Euclid mission",
+    "description": "A profile showing the trajectory of ESA's Euclid mission.",
     "license": "MIT License",
     "name": "Euclid",
     "url": "https://www.openspaceproject.com",
@@ -49,21 +62,6 @@
     "mission": true
   },
   "properties": [
-    {
-      "name": "Scene.L2.Renderable.Enabled",
-      "type": "setPropertyValueSingle",
-      "value": "false"
-    },
-    {
-      "name": "Scene.L2Label.Renderable.Enabled",
-      "type": "setPropertyValueSingle",
-      "value": "false"
-    },
-    {
-      "name": "Scene.L2SmallLabel.Renderable.Enabled",
-      "type": "setPropertyValueSingle",
-      "value": "false"
-    },
     {
       "name": "Scene.EuclidTrailSun.Renderable.Enabled",
       "type": "setPropertyValueSingle",
@@ -87,6 +85,6 @@
   },
   "version": {
     "major": 1,
-    "minor": 4
+    "minor": 5
   }
 }

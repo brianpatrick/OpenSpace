@@ -2,7 +2,7 @@
  *                                                                                       *
  * OpenSpace                                                                             *
  *                                                                                       *
- * Copyright (c) 2014-2025                                                               *
+ * Copyright (c) 2014-2026                                                               *
  *                                                                                       *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this  *
  * software and associated documentation files (the "Software"), to deal in the Software *
@@ -25,59 +25,66 @@
 #include <modules/base/rendering/screenspacerenderablerenderable.h>
 
 #include <openspace/camera/camera.h>
+#include <openspace/documentation/documentation.h>
 #include <openspace/rendering/renderable.h>
 #include <openspace/scene/rotation.h>
 #include <openspace/scene/scale.h>
 #include <openspace/scene/translation.h>
+#include <openspace/util/time.h>
 #include <openspace/util/updatestructures.h>
+#include <ghoul/misc/dictionary.h>
+#include <limits>
+#include <optional>
+#include <utility>
 
 namespace {
-    constexpr openspace::properties::Property::PropertyInfo TimeInfo = {
+    using namespace openspace;
+
+    constexpr Property::PropertyInfo TimeInfo = {
         "Time",
         "Time",
         "The time (in J2000 seconds) that is used to calculate transformations and the "
         "renderable's data."
     };
 
-    constexpr openspace::properties::Property::PropertyInfo CameraPositionInfo = {
+    constexpr Property::PropertyInfo CameraPositionInfo = {
         "CameraPosition",
-        "Camera Position",
+        "Camera position",
         "Specifies the location of the virtual camera that is showing the renderable "
         "class. This position is provided in meters."
     };
 
-    constexpr openspace::properties::Property::PropertyInfo CameraCenterInfo = {
+    constexpr Property::PropertyInfo CameraCenterInfo = {
         "CameraCenter",
-        "Camera Center",
+        "Camera center",
         "The location of the camera's focal point. The camera's view direction will "
         "always be pointing at the provided center location. This position is provided "
         "in meters."
     };
 
-    constexpr openspace::properties::Property::PropertyInfo CameraUpInfo = {
+    constexpr Property::PropertyInfo CameraUpInfo = {
         "CameraUp",
-        "Camera Up",
+        "Camera up",
         "The direction that is 'up' for the provided camera. This value does not have "
         "any units."
     };
 
-    constexpr openspace::properties::Property::PropertyInfo CameraFovInfo = {
+    constexpr Property::PropertyInfo CameraFovInfo = {
         "CameraFov",
-        "Camera Field of view",
+        "Camera field of view",
         "The camera's field of view in degrees."
     };
 
-    const openspace::properties::PropertyOwner::PropertyOwnerInfo TransformInfo = {
+    const PropertyOwner::PropertyOwnerInfo TransformInfo = {
         "Transform",
         "Transform",
         "The Translation, Rotation, and Scale that are applied to the rendered "
         "Renderable."
     };
 
-    // This [ScreenSpaceRenderable](#core_screenspacerenderable) object can render any
-    // [Renderable](#renderable) type into an image that is shown in screen space. This
-    // can be used to display a rendered object as an overlay in front of the regular 3D
-    // rendering of the scene.
+    // Renders any [Renderable](#core_renderable) type into an image that is shown in
+    // screen space. This can be used to display a rendered object as an overlay in front
+    // of the regular 3D rendering of the scene.
     //
     // Note that to use this `ScreenSpaceRenderable`, it might be necessary to specify the
     // `size` parameter, which determines the resolution of the inset window into which
@@ -90,32 +97,31 @@ namespace {
     struct [[codegen::Dictionary(ScreenSpaceRenderableRenderable)]] Parameters {
         std::optional<std::string> identifier [[codegen::private()]];
 
-        // The [Renderable](#renderable) object that is shown in this ScreenSpace object.
-        // See the list of creatable renderable objects for options that can be used for
-        // this type.
-        ghoul::Dictionary renderable [[codegen::reference("renderable")]];
+        // The [Renderable](#core_renderable) object that is shown in this ScreenSpace
+        // object. See the list of creatable renderable objects for options that can be
+        // used for this type.
+        ghoul::Dictionary renderable [[codegen::reference("core_renderable")]];
 
         struct Transform {
-            // The [Translation](#core_transform_translation) object that is used for the
-            // provided [Renderable](#renderable). If no value is specified, a
-            // [StaticTranslation](#base_transform_translation_static) is created instead.
+            // The [Translation](#core_translation) object that is used for the provided
+            // [Renderable](#core_renderable). If no value is specified, a
+            // [StaticTranslation](#base_translation_static) is created instead.
             std::optional<ghoul::Dictionary> translation
-                [[codegen::reference("core_transform_translation")]];
+                [[codegen::reference("core_translation")]];
 
-            // The [Rotation](#core_transform_rotation) object that is used for the
-            // provided [Renderable](#renderable). If no value is specified, a
-            // [StaticRotation](#base_transform_rotation_static) is created instead.
+            // The [Rotation](#core_rotation) object that is used for the provided
+            // [Renderable](#core_renderable). If no value is specified, a
+            // [StaticRotation](#base_rotation_static) is created instead.
             std::optional<ghoul::Dictionary> rotation
-                [[codegen::reference("core_transform_rotation")]];
+                [[codegen::reference("core_rotation")]];
 
-            // The [Scale](#core_transform_scale) object that is used for the provided
-            // [Renderable](#renderable). If no value is specified, a
-            // [StaticScale](#base_transform_scale_static) is created instead.
-            std::optional<ghoul::Dictionary> scale
-                [[codegen::reference("core_transform_scale")]];
+            // The [Scale](#core_scale) object that is used for the provided
+            // [Renderable](#core_renderable). If no value is specified, a
+            // [StaticScale](#base_scale_static) is created instead.
+            std::optional<ghoul::Dictionary> scale [[codegen::reference("core_scale")]];
         };
         // The collection of transformations that are applied to the
-        // [Renderable](#renderable) before it is shown on screen.
+        // [Renderable](#core_renderable) before it is shown on screen.
         std::optional<Transform> transform;
 
         // Specifies the start date that is used to control the renderable and the
@@ -135,21 +141,21 @@ namespace {
         // [[codegen::verbatim(CameraFovInfo.description)]]
         std::optional<float> cameraFov;
     };
-#include "screenspacerenderablerenderable_codegen.cpp"
 } // namespace
+#include "screenspacerenderablerenderable_codegen.cpp"
 
 namespace openspace {
 
-documentation::Documentation ScreenSpaceRenderableRenderable::Documentation() {
+Documentation ScreenSpaceRenderableRenderable::Documentation() {
     return codegen::doc<Parameters>(
         "base_screenspace_renderable",
-        ScreenSpaceFramebuffer::Documentation()
+        ScreenSpaceRenderableFramebuffer::Documentation()
     );
 }
 
 ScreenSpaceRenderableRenderable::ScreenSpaceRenderableRenderable(
                                                       const ghoul::Dictionary& dictionary)
-    : ScreenSpaceFramebuffer(dictionary)
+    : ScreenSpaceRenderableFramebuffer(dictionary)
     , _time(
         TimeInfo,
         0.0,
@@ -187,55 +193,60 @@ ScreenSpaceRenderableRenderable::ScreenSpaceRenderableRenderable(
     addProperty(_cameraFov);
 
     _renderable = Renderable::createFromDictionary(p.renderable);
-    _renderable->initialize();
     addPropertySubOwner(_renderable.get());
 
-    _transform = ghoul::mm_unique_ptr<properties::PropertyOwner>(
-        new properties::PropertyOwner(TransformInfo)
+    _transform.parent = ghoul::mm_unique_ptr<PropertyOwner>(
+        new PropertyOwner(TransformInfo)
     );
-    addPropertySubOwner(_transform.get());
+    addPropertySubOwner(_transform.parent.get());
 
     if (p.transform.has_value() && p.transform->translation.has_value()) {
-        _translation = Translation::createFromDictionary(*p.transform->translation);
+        _transform.translation =
+            Translation::createFromDictionary(*p.transform->translation);
     }
     else {
         ghoul::Dictionary translation;
         translation.setValue("Type", std::string("StaticTranslation"));
         translation.setValue("Position", glm::dvec3(0.0));
-        _translation = Translation::createFromDictionary(translation);
+        _transform.translation = Translation::createFromDictionary(translation);
     }
-    _translation->initialize();
-    _transform->addPropertySubOwner(_translation.get());
+    _transform.parent->addPropertySubOwner(_transform.translation.get());
 
     if (p.transform.has_value() && p.transform->rotation.has_value()) {
-        _rotation = Rotation::createFromDictionary(*p.transform->rotation);
+        _transform.rotation = Rotation::createFromDictionary(*p.transform->rotation);
     }
     else {
         ghoul::Dictionary rotation;
         rotation.setValue("Type", std::string("StaticRotation"));
         rotation.setValue("Rotation", glm::dvec3(0.0));
-        _rotation = Rotation::createFromDictionary(rotation);
+        _transform.rotation = Rotation::createFromDictionary(rotation);
     }
-    _rotation->initialize();
-    _transform->addPropertySubOwner(_rotation.get());
+    _transform.parent->addPropertySubOwner(_transform.rotation.get());
 
     if (p.transform.has_value() && p.transform->scale.has_value()) {
-        _scale = Scale::createFromDictionary(*p.transform->scale);
+        _transform.scale = Scale::createFromDictionary(*p.transform->scale);
     }
     else {
         ghoul::Dictionary scale;
         scale.setValue("Type", std::string("StaticScale"));
         scale.setValue("Scale", 1.0);
-        _scale = Scale::createFromDictionary(scale);
+        _transform.scale = Scale::createFromDictionary(scale);
     }
-    _scale->initialize();
-    _transform->addPropertySubOwner(_scale.get());
+    _transform.parent->addPropertySubOwner(_transform.scale.get());
 }
 
 ScreenSpaceRenderableRenderable::~ScreenSpaceRenderableRenderable() {}
 
-bool ScreenSpaceRenderableRenderable::initializeGL() {
-    ScreenSpaceFramebuffer::initializeGL();
+void ScreenSpaceRenderableRenderable::initialize() {
+    ScreenSpaceRenderableFramebuffer::initialize();
+    _transform.translation->initialize();
+    _transform.rotation->initialize();
+    _transform.scale->initialize();
+    _renderable->initialize();
+}
+
+void ScreenSpaceRenderableRenderable::initializeGL() {
+    ScreenSpaceRenderableFramebuffer::initializeGL();
 
     _renderable->initializeGL();
 
@@ -246,8 +257,8 @@ bool ScreenSpaceRenderableRenderable::initializeGL() {
 
         Camera camera;
         // @TODO (2025-03-24, abock): These two lines can be removed once #3573 is fixed
-        camera.setPositionVec3(glm::dvec3(0.0, 0.0, 0.0));
-        camera.setRotation(glm::dvec3(0.0, 0.0, 0.0));
+        camera.setPosition(glm::dvec3(0.0));
+        camera.setRotation(glm::dvec3(0.0));
 
         glm::mat4 view = glm::lookAt(
             _cameraPosition.value(),
@@ -265,25 +276,25 @@ bool ScreenSpaceRenderableRenderable::initializeGL() {
         );
         camera.sgctInternal.setProjectionMatrix(proj);
 
-        openspace::RenderData renderData = {
+        const openspace::RenderData renderData = {
             .camera = camera,
             .time = Time(_time),
             .modelTransform = {
-                .translation = _translation->position(),
-                .rotation = _rotation->matrix(),
-                .scale = _scale->scaleValue()
+                .translation = _transform.translation->position(),
+                .rotation = _transform.rotation->matrix(),
+                .scale = _transform.scale->scaleValue()
             }
         };
         RendererTasks tasks;
         _renderable->render(renderData, tasks);
     });
-    return true;
 }
 
-bool ScreenSpaceRenderableRenderable::deinitializeGL() {
+void ScreenSpaceRenderableRenderable::deinitializeGL() {
     _renderable->deinitializeGL();
     _renderable->deinitialize();
-    return ScreenSpaceFramebuffer::deinitializeGL();
+
+    ScreenSpaceRenderableFramebuffer::deinitializeGL();
 }
 
 void ScreenSpaceRenderableRenderable::update() {
@@ -292,14 +303,14 @@ void ScreenSpaceRenderableRenderable::update() {
         .previousFrameTime = Time(_previousTime)
     };
 
-    _translation->update(updateData);
-    updateData.modelTransform.translation = _translation->position();
+    _transform.translation->update(updateData);
+    updateData.modelTransform.translation = _transform.translation->position();
 
-    _rotation->update(updateData);
-    updateData.modelTransform.rotation = _rotation->matrix();
+    _transform.rotation->update(updateData);
+    updateData.modelTransform.rotation = _transform.rotation->matrix();
 
-    _scale->update(updateData);
-    updateData.modelTransform.scale = _scale->scaleValue();
+    _transform.scale->update(updateData);
+    updateData.modelTransform.scale = _transform.scale->scaleValue();
 
     _renderable->update(updateData);
 }

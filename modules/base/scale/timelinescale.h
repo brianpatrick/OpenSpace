@@ -2,7 +2,7 @@
  *                                                                                       *
  * OpenSpace                                                                             *
  *                                                                                       *
- * Copyright (c) 2014-2025                                                               *
+ * Copyright (c) 2014-2026                                                               *
  *                                                                                       *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this  *
  * software and associated documentation files (the "Software"), to deal in the Software *
@@ -29,27 +29,24 @@
 
 #include <openspace/properties/scalar/boolproperty.h>
 #include <openspace/util/timeline.h>
-#include <ghoul/misc/managedmemoryuniqueptr.h>
 
 namespace openspace {
-
-struct UpdateData;
-
-namespace documentation { struct Documentation; }
 
 class TimelineScale : public Scale {
 public:
     explicit TimelineScale(const ghoul::Dictionary& dictionary);
 
+    void initialize() override;
+
     void update(const UpdateData& data) override;
     glm::dvec3 scaleValue(const UpdateData& data) const override;
-    static documentation::Documentation Documentation();
+    static openspace::Documentation Documentation();
 
 private:
     Timeline<ghoul::mm_unique_ptr<Scale>> _timeline;
-    properties::BoolProperty _shouldInterpolate;
+    BoolProperty _shouldInterpolate;
 };
 
 } // namespace openspace
 
-#endif // __OPENSPACE_MODULE_BASE___TIMELINETRANSLATION___H__
+#endif // __OPENSPACE_MODULE_BASE___TIMELINESCALE___H__

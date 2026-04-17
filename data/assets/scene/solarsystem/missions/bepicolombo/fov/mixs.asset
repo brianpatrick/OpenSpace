@@ -1,11 +1,11 @@
-local transforms = asset.require("../model")
+local model = asset.require("../model")
 local kernels = asset.require("../kernels")
 
 
 
 local MIXS_C = {
   Identifier = "BepiColomboMPO_MIXS-C",
-  Parent = transforms.BepiColombo.Identifier,
+  Parent = model.BepiColombo.Identifier,
   Renderable = {
     Type = "RenderableFov",
     Body = kernels.ID.MPO,
@@ -22,12 +22,13 @@ local MIXS_C = {
   GUI = {
     Name = "MPO MIXS-C",
     Path = "/Solar System/Missions/BepiColombo/Instruments",
+    Focusable = false
   }
 }
 
 local MIXS_T = {
   Identifier = "BepiColomboMPO_MIXS-T",
-  Parent = transforms.BepiColombo.Identifier,
+  Parent = model.BepiColombo.Identifier,
   Renderable = {
     Type = "RenderableFov",
     Body = kernels.ID.MPO,
@@ -44,6 +45,7 @@ local MIXS_T = {
   GUI = {
     Name = "MPO MIXS-T",
     Path = "/Solar System/Missions/BepiColombo/Instruments",
+    Focusable = false
   }
 }
 

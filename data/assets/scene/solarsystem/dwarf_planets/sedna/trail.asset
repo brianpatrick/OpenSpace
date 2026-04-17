@@ -1,11 +1,11 @@
-local sunTransforms = asset.require("scene/solarsystem/sun/transforms")
+local sunAsset = asset.require("scene/solarsystem/sun/transforms")
 local transforms = asset.require("./transforms")
 
 
 
-local Trail = {
+local SednaTrail = {
   Identifier = "SednaTrail",
-  Parent = sunTransforms.SunEclipJ2000.Identifier,
+  Parent = sunAsset.SunEclipJ2000.Identifier,
   Renderable = {
     Type = "RenderableTrailOrbit",
     Enabled = asset.enabled,
@@ -19,20 +19,21 @@ local Trail = {
   GUI = {
     Name = "Sedna Trail",
     Path = "/Solar System/Dwarf Planets/Sedna",
+    Focusable = false,
     Description = "Trail of Sedna"
   }
 }
 
 
 asset.onInitialize(function()
-  openspace.addSceneGraphNode(Trail)
+  openspace.addSceneGraphNode(SednaTrail)
 end)
 
 asset.onDeinitialize(function()
-  openspace.removeSceneGraphNode(Trail)
+  openspace.removeSceneGraphNode(SednaTrail)
 end)
 
-asset.export("Trail", Trail)
+asset.export(SednaTrail)
 
 
 

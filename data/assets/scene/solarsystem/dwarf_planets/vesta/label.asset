@@ -2,9 +2,9 @@ local transforms = asset.require("./transforms")
 
 
 
-local Label = {
+local VestaLabel = {
   Identifier = "VestaLabel",
-  Parent = transforms.Position.Identifier,
+  Parent = transforms.VestaPosition.Identifier,
   Renderable = {
     Type = "RenderableLabel",
     Enabled = asset.enabled,
@@ -23,20 +23,21 @@ local Label = {
   GUI = {
     Name = "Vesta Label",
     Path = "/Solar System/Dwarf Planets/Vesta",
+    Focusable = false,
     Description = "Label for Vesta, visible at the solarsystem overview zoom level"
   }
 }
 
 
 asset.onInitialize(function()
-  openspace.addSceneGraphNode(Label)
+  openspace.addSceneGraphNode(VestaLabel)
 end)
 
 asset.onDeinitialize(function()
-  openspace.removeSceneGraphNode(Label)
+  openspace.removeSceneGraphNode(VestaLabel)
 end)
 
-asset.export("Label", Label)
+asset.export(VestaLabel)
 
 
 

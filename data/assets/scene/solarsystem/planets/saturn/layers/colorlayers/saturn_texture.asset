@@ -1,4 +1,4 @@
-local globe = asset.require("../../saturn")
+local saturnAsset = asset.require("scene/solarsystem/planets/saturn/globe")
 
 
 
@@ -14,17 +14,16 @@ local Layer = {
   Identifier = "Texture",
   FilePath = texturesPath .. "saturn.jpg",
   Enabled = asset.enabled,
-  ZIndex = 5,
-  CacheSettings = { Enabled = false }
+  ZIndex = 5
 }
 
 
 asset.onInitialize(function()
-  openspace.globebrowsing.addLayer(globe.Saturn.Identifier, "ColorLayers", Layer)
+  openspace.globebrowsing.addLayer(saturnAsset.Saturn.Identifier, "ColorLayers", Layer)
 end)
 
 asset.onDeinitialize(function()
-  openspace.globebrowsing.deleteLayer(globe.Saturn.Identifier, "ColorLayers", Layer)
+  openspace.globebrowsing.deleteLayer(saturnAsset.Saturn.Identifier, "ColorLayers", Layer)
 end)
 
 asset.export("layer", Layer)

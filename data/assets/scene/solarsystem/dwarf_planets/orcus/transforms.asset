@@ -1,4 +1,4 @@
-local transforms = asset.require("scene/solarsystem/sun/transforms")
+local sunAsset = asset.require("scene/solarsystem/sun/transforms")
 
 
 
@@ -16,30 +16,31 @@ local Translation = {
   Period = 89359.12208173508 * 60 * 60 * 24
 }
 
-local Position = {
+local OrcusPosition = {
   Identifier = "OrcusPosition",
-  Parent = transforms.SunEclipJ2000.Identifier,
+  Parent = sunAsset.SunEclipJ2000.Identifier,
   Transform = {
     Translation = Translation
   },
   GUI = {
     Name = "Orcus Position",
     Path = "/Solar System/Dwarf Planets/Orcus",
+    Focusable = false,
     Hidden = true
   }
 }
 
 
 asset.onInitialize(function()
-  openspace.addSceneGraphNode(Position)
+  openspace.addSceneGraphNode(OrcusPosition)
 end)
 
 asset.onDeinitialize(function()
-  openspace.removeSceneGraphNode(Position)
+  openspace.removeSceneGraphNode(OrcusPosition)
 end)
 
 asset.export("Translation", Translation)
-asset.export("Position", Position)
+asset.export(OrcusPosition)
 
 
 

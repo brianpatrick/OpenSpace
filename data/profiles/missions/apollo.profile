@@ -9,6 +9,21 @@
     "scene/solarsystem/missions/apollo/insignias_map",
     "scene/solarsystem/missions/apollo/mission"
   ],
+  "addons": {
+    "custom": [
+      {
+        "version": { "major": 1, "minor": 0 },
+        "identifier": "apollo17_boulders",
+        "name": "Apollo 17 Boulders",
+        "description": "Adds 3D reconstructed boulders for Stations 2, 6, and 7 of the Apollo 17 EVAs.",
+        "assets": [
+          "scene/solarsystem/missions/apollo/17/bouldersstation2",
+          "scene/solarsystem/missions/apollo/17/bouldersstation6",
+          "scene/solarsystem/missions/apollo/17/bouldersstation7"
+        ]
+      }
+    ]
+  },
   "camera": {
     "altitude": 15000000.0,
     "anchor": "Earth",
@@ -38,40 +53,6 @@
     315360000.0,
     630720000.0
   ],
-  "keybindings": [
-    {
-      "action": "os.apollo8.SetupEarthrise",
-      "key": "E"
-    },
-    {
-      "action": "os.apollo8.SetupLaunch",
-      "key": "U"
-    },
-    {
-      "action": "os.apollo.moon.ToggleKaguyaLayer",
-      "key": "K"
-    },
-    {
-      "action": "os.apollo.FocusEarth",
-      "key": "HOME"
-    },
-    {
-      "action": "os.apollo.FocusMoon",
-      "key": "M"
-    },
-    {
-      "action": "os.apollo17.setup.LandingSite",
-      "key": "F7"
-    },
-    {
-      "action": "os.apollo.DisableApolloSites",
-      "key": "F9"
-    },
-    {
-      "action": "os.apollo11.setup.LandingSite",
-      "key": "F11"
-    }
-  ],
   "mark_nodes": [
     "Earth",
     "Moon",
@@ -82,7 +63,7 @@
   ],
   "meta": {
     "author": "OpenSpace Team",
-    "description": "This profile contains all the apollo assets in openspace. Apollo 8,11,17 and some associated materials.",
+    "description": "This profile contains all the apollo assets in OpenSpace. Apollo 8,11,17 and some associated materials.",
     "license": "MIT License",
     "name": "Apollo",
     "url": "https://www.openspaceproject.com",
@@ -110,6 +91,6 @@
   },
   "version": {
     "major": 1,
-    "minor": 4
+    "minor": 5
   }
 }

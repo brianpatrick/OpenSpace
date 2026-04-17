@@ -2,7 +2,7 @@
  *                                                                                       *
  * OpenSpace                                                                             *
  *                                                                                       *
- * Copyright (c) 2014-2025                                                               *
+ * Copyright (c) 2014-2026                                                               *
  *                                                                                       *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this  *
  * software and associated documentation files (the "Software"), to deal in the Software *
@@ -24,21 +24,23 @@
 
 #include <openspace/properties/property.h>
 
+#include <openspace/engine/globals.h>
+#include <openspace/events/event.h>
+#include <openspace/events/eventengine.h>
+#include <openspace/json.h>
 #include <openspace/properties/propertyowner.h>
-#include <ghoul/logging/logmanager.h>
-#include <ghoul/lua/ghoul_lua.h>
-#include <ghoul/misc/dictionary.h>
-#include <ghoul/misc/dictionaryjsonformatter.h>
+#include <openspace/topic/server.h>
+#include <ghoul/misc/profiling.h>
 #include <algorithm>
 
-namespace openspace::properties {
+namespace openspace {
 
-const char* Property::ViewOptions::Color = "Color";
-const char* Property::ViewOptions::MinMaxRange = "MinMaxRange";
+std::string Property::ViewOptions::Color = "Color";
+std::string Property::ViewOptions::MinMaxRange = "MinMaxRange";
 
 #ifdef _DEBUG
 uint64_t Property::Identifier = 0;
-#endif
+#endif // _DEBUG
 
 Property::Property(PropertyInfo info)
     : _identifier(info.identifier)
@@ -46,12 +48,13 @@ Property::Property(PropertyInfo info)
     , _description(info.description)
 #ifdef _DEBUG
     , _id(Identifier++)
-#endif
+#endif // _DEBUG
 {
     ghoul_assert(!_identifier.empty(), "Identifier must not be empty");
     ghoul_assert(!_guiName.empty(), "guiName must not be empty");
 
     setVisibility(info.visibility);
+    setNeedsConfirmation(info.needsConfirmation);
 }
 
 Property::~Property() {
@@ -101,6 +104,13 @@ std::string Property::groupIdentifier() const {
 void Property::setVisibility(Visibility visibility) {
     _metaData.visibility = visibility;
     notifyMetaDataChangeListeners();
+
+    // We only subscribe to meta data changes for visible properties, so if the visibility
+    // changes during runtime, we need to notify the property owner about the change for
+    // it to affect properties that are currently hidden
+    if (_owner) {
+        global::eventEngine->publishEvent<EventPropertyTreeUpdated>(_owner->uri());
+    }
 }
 
 Property::Visibility Property::visibility() const {
@@ -116,8 +126,8 @@ bool Property::isReadOnly() const {
     return _metaData.readOnly.value_or(false);
 }
 
-void Property::setNeedsConfirmation(bool state) {
-    _metaData.needsConfirmation = state;
+void Property::setNeedsConfirmation(bool needsConfirmation) {
+    _metaData.needsConfirmation = needsConfirmation;
     notifyMetaDataChangeListeners();
 }
 
@@ -158,7 +168,9 @@ Property::OnChangeHandle Property::onDelete(std::function<void()> callback) {
     return handle;
 }
 
-Property::OnMetaDataChangeHandle Property::onMetaDataChange(std::function<void()> callback) {
+Property::OnMetaDataChangeHandle Property::onMetaDataChange(
+                                                           std::function<void()> callback)
+{
     ghoul_assert(callback, "The callback must not be empty");
 
     const OnMetaDataChangeHandle handle = _currentHandleValue++;
@@ -240,6 +252,16 @@ void Property::notifyChangeListeners() {
     for (const std::pair<OnChangeHandle, std::function<void()>>& p : _onChangeCallbacks) {
         p.second();
     }
+    if (uri().empty()) {
+        return;
+    }
+    nlohmann::json payload;
+    payload["event"] = "property_changed";
+    payload["payload"] = {
+        { "property", uri() },
+        { "value", nlohmann::json::parse(jsonValue()) }
+    };
+    global::server->passDataToTopic("propertyTree", payload);
 }
 
 void Property::notifyMetaDataChangeListeners() {
@@ -247,6 +269,18 @@ void Property::notifyMetaDataChangeListeners() {
     for (Callback& p : _onMetaDataChangeCallbacks) {
         p.second();
     }
+    if (uri().empty()) {
+        // Property has no owner yet (still being constructed), so there is nothing to
+        // notify
+        return;
+    }
+    nlohmann::json payload;
+    payload["event"] = "property_changed";
+    payload["payload"] = {
+        { "property", uri() },
+        { "metaData", generateJsonDescription() }
+    };
+    global::server->passDataToTopic("propertyTree", payload);
 }
 
 bool Property::hasChanged() const {
@@ -271,24 +305,25 @@ nlohmann::json Property::generateJsonDescription() const {
        { Visibility::Developer, "Developer" },
        { Visibility::Hidden, "Hidden" }
     };
+
     const std::string& vis = VisibilityConverter.at(_metaData.visibility);
     const bool isReadOnly = _metaData.readOnly.value_or(false);
-    const bool needsConfirmation = _metaData.needsConfirmation.value_or(false);
     const std::string groupId = groupIdentifier();
 
     nlohmann::json json = {
+        { "identifier", _identifier },
         { "description", _description },
         { "guiName", _guiName },
         { "group", groupId },
         { "isReadOnly", isReadOnly },
-        { "needsConfirmation", needsConfirmation },
+        { "needsConfirmation", _metaData.needsConfirmation },
         { "type", className() },
         { "visibility", vis }
     };
 
-    if (_metaData.viewOptions.size() > 0) {
+    if (!_metaData.viewOptions.empty()) {
         nlohmann::json viewOptions = nlohmann::json::object();
-        for (const std::pair<std::string, bool>& p : _metaData.viewOptions) {
+        for (const std::pair<const std::string, bool>& p : _metaData.viewOptions) {
             viewOptions[p.first] = p.second;
         }
         json["viewOptions"] = viewOptions;
@@ -309,4 +344,4 @@ nlohmann::json Property::generateAdditionalJsonDescription() const {
 void Property::setLuaInterpolationTarget(lua_State*) {}
 void Property::interpolateValue(float, ghoul::EasingFunc<float>) {}
 
-} // namespace openspace::properties
+} // namespace openspace

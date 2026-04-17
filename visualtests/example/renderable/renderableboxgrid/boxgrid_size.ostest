@@ -1,0 +1,36 @@
+{
+  "profile": "empty",
+  "commands": [
+    {
+      "type": "asset",
+      "value": "examples/renderable/renderableboxgrid/boxgrid_size.asset"
+    },
+    {
+      "type": "property",
+      "value": {
+        "property": "NavigationHandler.OrbitalNavigator.LimitZoom.EnableMinimumAllowedDistance",
+        "value": false
+      }
+    },
+    {
+      "type": "navigationstate",
+      "value": {
+        "anchor": "RenderableBoxGrid_Example_Size",
+        "position": [
+          1.7216059608309688,
+          1.7216059608309413,
+          1.7216059608309082
+        ],
+        "up": [
+          -0.004082482904638703,
+          0.008164965809277254,
+          -0.004082482904638568
+        ],
+        "timestamp": "2000 JAN 01 12:00:00"
+      }
+    },
+    {
+      "type": "screenshot"
+    }
+  ]
+}

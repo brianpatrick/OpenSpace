@@ -1,4 +1,4 @@
-local globe = asset.require("../../mimas")
+local mimasAsset = asset.require("scene/solarsystem/planets/saturn/mimas/globe")
 
 
 
@@ -14,17 +14,16 @@ local Layer = {
   Identifier = "Texture",
   FilePath = texturesPath .. "mimas.jpg",
   Enabled = asset.enabled,
-  ZIndex = 5,
-  CacheSettings = { Enabled = false }
+  ZIndex = 5
 }
 
 
 asset.onInitialize(function()
-  openspace.globebrowsing.addLayer(globe.Mimas.Identifier, "ColorLayers", Layer)
+  openspace.globebrowsing.addLayer(mimasAsset.Mimas.Identifier, "ColorLayers", Layer)
 end)
 
 asset.onDeinitialize(function()
-  openspace.globebrowsing.deleteLayer(globe.Mimas.Identifier, "ColorLayers", Layer)
+  openspace.globebrowsing.deleteLayer(mimasAsset.Mimas.Identifier, "ColorLayers", Layer)
 end)
 
 asset.export("layer", Layer)

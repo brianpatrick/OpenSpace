@@ -1,5 +1,5 @@
 local transforms = asset.require("../transforms")
-local kernelsJup = asset.require("scene/solarsystem/planets/jupiter/kernels")
+local jupiterKernels = asset.require("scene/solarsystem/planets/jupiter/kernels")
 local kernels = asset.require("../kernels")
 
 
@@ -12,7 +12,7 @@ local JuiceTrailGanymede = {
     Translation = {
       Type = "SpiceTranslation",
       Target = kernels.ID.Juice,
-      Observer = kernelsJup.ID.Ganymede
+      Observer = jupiterKernels.ID.Ganymede
     },
     Color = { 0.70, 0.770, 0.35 },
     StartTime = "2034 DEC 01 00:00:00.000",
@@ -22,6 +22,7 @@ local JuiceTrailGanymede = {
   GUI = {
     Name = "Juice Trail (Ganymede)",
     Path = "/Solar System/Missions/Juice",
+    Focusable = false,
     Description = "Juice's trajectory relative to Ganymede"
   }
 }

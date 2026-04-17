@@ -2,7 +2,7 @@
  *                                                                                       *
  * OpenSpace                                                                             *
  *                                                                                       *
- * Copyright (c) 2014-2025                                                               *
+ * Copyright (c) 2014-2026                                                               *
  *                                                                                       *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this  *
  * software and associated documentation files (the "Software"), to deal in the Software *
@@ -26,15 +26,23 @@
 #define __OPENSPACE_CORE___PROPERTY___H__
 
 #include <openspace/util/json_helper.h>
+#include <ghoul/misc/boolean.h>
 #include <ghoul/misc/easing.h>
 #include <ghoul/lua/lua_types.h>
+#include <cstdint>
 #include <functional>
+#include <limits>
+#include <optional>
 #include <string>
 #include <string_view>
+#include <typeinfo>
+#include <unordered_map>
+#include <utility>
+#include <vector>
 
 struct lua_State;
 
-namespace openspace::properties {
+namespace openspace {
 
 class PropertyOwner;
 
@@ -62,6 +70,8 @@ class PropertyOwner;
  */
 class Property {
 public:
+    BooleanType(NeedsConfirmation);
+
     /**
      * The visibility classes for Property%s. The classes are strictly ordered as
      * Hidden > Developer > AdvancedUser > User > NoviceUser > Always
@@ -93,18 +103,22 @@ public:
          * GCC requires an explicit constructor here, as it does not handle the default
          * argument for the struct initialization.
          */
-        constexpr PropertyInfo(const char* ident, const char* gui, const char* desc)
+        constexpr PropertyInfo(const char* ident, const char* gui, const char* desc,
+                             NeedsConfirmation needsConfirmation_ = NeedsConfirmation::No)
             : identifier(ident)
             , guiName(gui)
             , description(desc)
+            , needsConfirmation(needsConfirmation_)
         {}
 
         constexpr PropertyInfo(const char* ident, const char* gui, const char* desc,
-                               Visibility vis)
+                               Visibility vis,
+                             NeedsConfirmation needsConfirmation_ = NeedsConfirmation::No)
             : identifier(ident)
             , guiName(gui)
             , description(desc)
             , visibility(vis)
+            , needsConfirmation(needsConfirmation_)
         {}
 
         /// The unique identifier that is part of the fully qualified URI of this Property
@@ -115,6 +129,8 @@ public:
         const char* description;
         /// Determines the visibility of this Property in the user interface
         Visibility visibility = Visibility::Default;
+        /// Determines if the Property require confirmation upon value change
+        NeedsConfirmation needsConfirmation = NeedsConfirmation::No;
     };
 
     /// An OnChangeHandle is returned by the onChange method to uniquely identify an
@@ -148,7 +164,7 @@ public:
      * read-only state is `false`.
      *
      * \param info The PropertyInfo structure that contains all the required static
-     *        information for initializing this Property.
+     *        information for initializing this Property
      *
      * \pre \p info.identifier must not be empty
      * \pre \p info.guiName must not be empty
@@ -160,6 +176,8 @@ public:
      * remove the Property from the PropertyOwner.
      */
     virtual ~Property();
+
+    Property(Property&&) noexcept = default;
 
     /**
      * This method returns the class name of the Property. The method is used by the
@@ -186,7 +204,6 @@ public:
      * no-op.
      *
      * \param state The Lua state to which the value will be encoded
-     * \return `true` if the encoding succeeded, `false` otherwise
      */
     virtual void getLuaValue(lua_State* state) const = 0;
 
@@ -208,7 +225,7 @@ public:
      * can be a combination of any value contained in the `LuaTypes`.
      *
      * \return The Lua type that will be consumed or produced by the Property::getLuaValue
-     *         and Property::setLuaValue methods.
+     *         and Property::setLuaValue methods
      */
     virtual ghoul::lua::LuaTypes typeLua() const = 0;
 
@@ -229,7 +246,7 @@ public:
      *
      * \param callback The callback function that is called when the encapsulated type has
      *        been successfully changed by either the Property::set or
-     *        Property::setLuaValue methods.
+     *        Property::setLuaValue methods
      * \return An OnChangeHandle that can be used in subsequent calls to remove a callback
      *
      * \pre The \p callback must not be empty
@@ -253,7 +270,7 @@ public:
      * returned here.
      *
      * \param callback The callback function that is called when the meta data of the
-     *        property has been changed.
+     *        property has been changed
      * \return An OnMetaDataChangeHandle that can be used in subsequent calls to remove a
      *         callback
      *
@@ -267,9 +284,9 @@ public:
      * are removed.
      *
      * \param handle An OnChangeHandle that was returned from a previous call to onChange
-     *        by this property or OnChangeHandleAll if all callbacks should be removed.
+     *        by this property or OnChangeHandleAll if all callbacks should be removed
      *
-     * \pre \p handle must refer to a callback that has been previously registred
+     * \pre \p handle must refer to a callback that has been previously registered
      * \pre \p handle must refer to a callback that has not been removed previously
      */
     void removeOnChange(OnChangeHandle handle);
@@ -279,9 +296,9 @@ public:
      * method.
      *
      * \param handle An OnDeleteHandle that was returned from a previous call to onDelete
-     *        by this property.
+     *        by this property
      *
-     * \pre \p handle must refer to a callback that has been previously registred
+     * \pre \p handle must refer to a callback that has been previously registered
      * \pre \p handle must refer to a callback that has not been removed previously
      */
     void removeOnDelete(OnDeleteHandle handle);
@@ -292,10 +309,10 @@ public:
      * all registered callbacks are removed.
      *
      * \param handle An OnMetaDataChangeHandle that was returned from a previous call to
-     * onMetaDataChange by this property or OnMetaDataChangeHandleAll if all callbacks
-     * should be removed.
+     *        onMetaDataChange by this property or OnMetaDataChangeHandleAll if all
+     *        callbacks should be removed
      *
-     * \pre \p handle must refer to a callback that has been previously registred
+     * \pre \p handle must refer to a callback that has been previously registered
      * \pre \p handle must refer to a callback that has not been removed previously
      */
     void removeOnMetaDataChange(OnMetaDataChangeHandle handle);
@@ -406,11 +423,12 @@ public:
      * This method determines if this Property requires confirmation upon every change of
      * the value. This setting is only a hint and does not need to be followed by GUI
      * applications and does not have any effect on the Property::set or
-     * Property::setLuaValue methods. The default value is `false`.
+     * Property::setLuaValue methods.
      *
-     * \param state `true` if the Property needs confirmation, `false` otherwise
+     * \param needsConfirmation `true` if confirmation dialogs should be shown, `false`
+     *        otherwise
      */
-    void setNeedsConfirmation(bool state);
+    void setNeedsConfirmation(bool needsConfirmation);
 
     /**
      * Default view options that can be used in the Property::setViewOption method. The
@@ -419,8 +437,8 @@ public:
      *   - Property::ViewOptions::MinMaxRange = `MinMaxRange` (Intended for Vec2)
      */
     struct ViewOptions {
-        static const char* Color;
-        static const char* MinMaxRange;
+        static std::string Color;
+        static std::string MinMaxRange;
     };
 
     /**
@@ -455,7 +473,9 @@ public:
      */
     virtual std::string jsonValue() const;
 
-    /// Interpolation methods
+    /**
+     * Interpolation methods.
+     */
     virtual void setLuaInterpolationTarget(lua_State* state);
 
     virtual void interpolateValue(float t,
@@ -463,7 +483,7 @@ public:
 
     /**
      * Creates the information that is general to every Property and adds the
-     * `description`, `guiName`, `group`, `isReadOnly`, `needsConfirmation` `type`, 
+     * `description`, `guiName`, `group`, `isReadOnly`, `needsConfirmation` `type`,
      * and `visibility` keys and their values.
      *
      * \return The base description common to all Property classes
@@ -483,7 +503,7 @@ public:
     /**
      * Returns whether or not the property value has changed.
      *
-     * \return true if the property has changed
+     * \return `true` if the property has changed
      */
     bool hasChanged() const;
 
@@ -507,12 +527,12 @@ protected:
     void notifyChangeListeners();
 
     /**
-     * This method must be called by all subclasses whenever the meta data has
-     * changed and potential listeners need to be informed.
+     * This method must be called by all subclasses whenever the meta data has changed and
+     * potential listeners need to be informed.
      */
     void notifyMetaDataChangeListeners();
 
-    /// The PropetyOwner this Property belongs to, or `nullptr`
+    /// The PropertyOwner this Property belongs to, or `nullptr`
     PropertyOwner* _owner = nullptr;
 
     /// The identifier for this Property
@@ -524,12 +544,14 @@ protected:
     /// The user-facing description of this Property
     std::string _description;
 
-    /// The meta data necessary for external applications
+    /**
+     * The meta data necessary for external applications.
+     */
     struct {
         std::optional<std::string> group;
         Visibility visibility = Visibility::Default;
         std::optional<bool> readOnly;
-        std::optional<bool> needsConfirmation;
+        bool needsConfirmation = false;
         std::unordered_map<std::string, bool> viewOptions;
     } _metaData;
 
@@ -556,12 +578,12 @@ private:
 
 #ifdef _DEBUG
     // These identifiers can be used for debugging. Each Property is assigned one unique
-    // identifier.
+    // identifier
     static uint64_t Identifier;
     uint64_t _id;
 #endif
 };
 
-} // namespace openspace::properties
+} // namespace openspace
 
 #endif // __OPENSPACE_CORE___PROPERTY___H__

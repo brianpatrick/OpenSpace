@@ -1,4 +1,4 @@
-local globe = asset.require("../../enceladus")
+local enceladusAsset = asset.require("scene/solarsystem/planets/saturn/enceladus/globe")
 
 
 
@@ -14,17 +14,16 @@ local Layer = {
   Identifier = "Texture",
   FilePath = texturesPath .. "enceladus.jpg",
   Enabled = asset.enabled,
-  ZIndex = 5,
-  CacheSettings = { Enabled = false }
+  ZIndex = 5
 }
 
 
 asset.onInitialize(function()
-  openspace.globebrowsing.addLayer(globe.Enceladus.Identifier, "ColorLayers", Layer)
+  openspace.globebrowsing.addLayer(enceladusAsset.Enceladus.Identifier, "ColorLayers", Layer)
 end)
 
 asset.onDeinitialize(function()
-  openspace.globebrowsing.deleteLayer(globe.Enceladus.Identifier, "ColorLayers", Layer)
+  openspace.globebrowsing.deleteLayer(enceladusAsset.Enceladus.Identifier, "ColorLayers", Layer)
 end)
 
 asset.export("layer", Layer)

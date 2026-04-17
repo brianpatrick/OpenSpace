@@ -1,4 +1,4 @@
-local transforms = asset.require("scene/solarsystem/planets/earth/moon/moon")
+local transforms = asset.require("scene/solarsystem/planets/earth/moon/globe")
 local coreKernels = asset.require("spice/core")
 
 
@@ -20,7 +20,8 @@ local EarthMoonShadow = {
   },
   GUI = {
     Name = "Earth/Moon Shadow",
-    Path = "/Solar System/Planets/Earth"
+    Path = "/Solar System/Planets/Earth",
+    Focusable = false
   }
 }
 

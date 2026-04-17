@@ -1,11 +1,11 @@
-local sunTransforms = asset.require("scene/solarsystem/sun/transforms")
+local sunAsset = asset.require("scene/solarsystem/sun/transforms")
 local transforms = asset.require("./transforms")
 
 
 
-local Trail = {
+local GonggongTrail = {
   Identifier = "GonggongTrail",
-  Parent = sunTransforms.SunEclipJ2000.Identifier,
+  Parent = sunAsset.SunEclipJ2000.Identifier,
   Renderable = {
     Type = "RenderableTrailOrbit",
     Enabled = asset.enabled,
@@ -18,20 +18,21 @@ local Trail = {
   Tag = { "planetTrail_dwarf" },
   GUI = {
     Name = "Gonggong Trail",
-    Path = "/Solar System/Dwarf Planets/Gonggong"
+    Path = "/Solar System/Dwarf Planets/Gonggong",
+    Focusable = false
   }
 }
 
 
 asset.onInitialize(function()
-  openspace.addSceneGraphNode(Trail)
+  openspace.addSceneGraphNode(GonggongTrail)
 end)
 
 asset.onDeinitialize(function()
-  openspace.removeSceneGraphNode(Trail)
+  openspace.removeSceneGraphNode(GonggongTrail)
 end)
 
-asset.export("Trail", Trail)
+asset.export(GonggongTrail)
 
 
 

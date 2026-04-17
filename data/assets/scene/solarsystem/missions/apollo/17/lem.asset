@@ -1,5 +1,5 @@
-local sun = asset.require("scene/solarsystem/sun/transforms")
-local moonAsset = asset.require("scene/solarsystem/planets/earth/moon/moon")
+local sunAsset = asset.require("scene/solarsystem/sun/transforms")
+local moonAsset = asset.require("scene/solarsystem/planets/earth/moon/globe")
 
 
 
@@ -51,7 +51,7 @@ local Apollo17LemModel = {
     SpecularIntensity = 0.0,
     RotationVector = { -90.0, 283.86999, 0 },
     LightSources = {
-      sun.LightSource,
+      sunAsset.LightSource,
       {
         Identifier = "Camera",
         Type = "CameraLightSource",

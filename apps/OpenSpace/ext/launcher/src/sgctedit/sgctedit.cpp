@@ -2,7 +2,7 @@
  *                                                                                       *
  * OpenSpace                                                                             *
  *                                                                                       *
- * Copyright (c) 2014-2025                                                               *
+ * Copyright (c) 2014-2026                                                               *
  *                                                                                       *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this  *
  * software and associated documentation files (the "Software"), to deal in the Software *
@@ -26,20 +26,25 @@
 
 #include <sgctedit/displaywindowunion.h>
 #include <sgctedit/monitorbox.h>
-#include <sgctedit/windowcontrol.h>
+#include <sgct/math.h>
 #include <ghoul/filesystem/filesystem.h>
+#include <ghoul/format.h>
 #include <ghoul/misc/assert.h>
 #include <QApplication>
 #include <QCheckBox>
-#include <QColor>
-#include <QComboBox>
 #include <QFileDialog>
 #include <QLabel>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QScreen>
 #include <QVBoxLayout>
+#include <algorithm>
+#include <cstdint>
 #include <fstream>
+#include <limits>
+#include <optional>
+#include <utility>
+#include <vector>
 
 namespace {
     constexpr int MaxNumberWindows = 4;
@@ -65,6 +70,19 @@ namespace {
         }
 
         // We got to the end without running into any problems, so we are golden
+        return false;
+    }
+
+    bool hasMultipleGuiWindows(const sgct::config::Cluster& cluster) {
+        bool foundGui = false;
+        for (const sgct::config::Window& window : cluster.nodes.front().windows) {
+            if (window.draw2D) {
+                if (foundGui) {
+                    return true;
+                }
+                foundGui = true;
+            }
+        }
         return false;
     }
 
@@ -310,6 +328,21 @@ void SgctEdit::saveCluster() {
             "window 2 has to be bigger than window 3 (if it exists), and window 3 has to "
             "be bigger than window 4.\nOtherwise, rendering errors might occur.\n\nAre "
             "you sure you want to continue?",
+            QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::No)
+        );
+        if (ret == QMessageBox::No) {
+            return;
+        }
+    }
+
+    if (hasMultipleGuiWindows(_cluster)) {
+        const int ret = QMessageBox::warning(
+            this,
+            "Multiple Windows with GUI Rendering",
+            "Multiple windows have 2D/GUI rendering enabled. Note that the interactable "
+            "user interface will only be shows on the first window with such a setting "
+            "if you proceed. Dashboards and other 2D elements will be shown on all "
+            "windows.\n\nAre you sure you want to continue?",
             QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::No)
         );
         if (ret == QMessageBox::No) {

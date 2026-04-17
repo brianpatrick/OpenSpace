@@ -2,7 +2,7 @@
 #                                                                                        #
 # OpenSpace                                                                              #
 #                                                                                        #
-# Copyright (c) 2014-2025                                                                #
+# Copyright (c) 2014-2026                                                                #
 #                                                                                        #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of this   #
 # software and associated documentation files (the "Software"), to deal in the Software  #
@@ -31,8 +31,8 @@ set(HEADER_FILES
   include/utility.h
   include/targetbrowserpair.h
   include/wwtcommunicator.h
-  include/browser.h
   include/screenspaceskybrowser.h
+  include/skybrowsertopic.h
 )
 source_group("Header Files" FILES ${HEADER_FILES})
 
@@ -44,14 +44,14 @@ set(SOURCE_FILES
   src/utility.cpp
   src/targetbrowserpair.cpp
   src/wwtcommunicator.cpp
-  src/browser.cpp
   src/screenspaceskybrowser.cpp
+  src/skybrowsertopic.cpp
 )
 source_group("Source Files" FILES ${SOURCE_FILES})
 
 set(SHADER_FILES
-    shaders/target_fs.glsl
-    shaders/target_vs.glsl
+  shaders/target_fs.glsl
+  shaders/target_vs.glsl
 )
 source_group("Shader Files" FILES ${SHADER_FILES})
 

@@ -1,4 +1,4 @@
-local ssb = asset.require("scene/solarsystem/sun/transforms")
+local sunAsset = asset.require("scene/solarsystem/sun/transforms")
 
 local pioneer_horizons = asset.resource({
   Name = "Pioneer horizons",
@@ -10,7 +10,7 @@ local pioneer_horizons = asset.resource({
 
 local Pioneer10 = {
   Identifier = "Pioneer10_Horizons",
-  Parent = ssb.SolarSystemBarycenter.Identifier,
+  Parent = sunAsset.SolarSystemBarycenter.Identifier,
   Renderable = {
     Type = "RenderableTrailTrajectory",
     Enabled = false,
@@ -32,6 +32,7 @@ local Pioneer10 = {
   GUI = {
     Name = "Pioneer 10 Trail (Horizons)",
     Path = "/Solar System/Missions/Pioneer",
+    Focusable = false,
     Description = [[Pioneer 10 Trail, spanning from March 4th, 1972 to January 1st, 2030.
       Data from JPL Horizons]]
   }
@@ -39,7 +40,7 @@ local Pioneer10 = {
 
 local Pioneer11 = {
   Identifier = "Pioneer11_Horizons",
-  Parent = ssb.SolarSystemBarycenter.Identifier,
+  Parent = sunAsset.SolarSystemBarycenter.Identifier,
   Renderable = {
     Type = "RenderableTrailTrajectory",
     Enabled = false,
@@ -61,6 +62,7 @@ local Pioneer11 = {
   GUI = {
     Name = "Pioneer 11 Trail (Horizons)",
     Path = "/Solar System/Missions/Pioneer",
+    Focusable = false,
     Description = [[Pioneer 11 Trail, spanning from April 7th, 1973 to January 1st, 2030.
       Data from JPL Horizons]]
   }

@@ -2,7 +2,7 @@
  *                                                                                       *
  * OpenSpace                                                                             *
  *                                                                                       *
- * Copyright (c) 2014-2025                                                               *
+ * Copyright (c) 2014-2026                                                               *
  *                                                                                       *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this  *
  * software and associated documentation files (the "Software"), to deal in the Software *
@@ -22,12 +22,13 @@
  * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                                         *
  ****************************************************************************************/
 
-#ifndef __OPENSPACE_MODULE_BASE___TIMEFRAMEKERNEL___H__
-#define __OPENSPACE_MODULE_BASE___TIMEFRAMEKERNEL___H__
+#ifndef __OPENSPACE_MODULE_SPACE___TIMEFRAMEKERNEL___H__
+#define __OPENSPACE_MODULE_SPACE___TIMEFRAMEKERNEL___H__
 
 #include <openspace/scene/timeframe.h>
 
 #include <openspace/util/timerange.h>
+#include <ghoul/misc/dictionary.h>
 
 namespace openspace {
 
@@ -38,7 +39,7 @@ public:
     bool initialize() override;
     void update(const Time& time) override;
 
-    static documentation::Documentation Documentation();
+    static openspace::Documentation Documentation();
 
 private:
     ghoul::Dictionary _initialization;
@@ -49,4 +50,4 @@ private:
 
 } // namespace openspace
 
-#endif // __OPENSPACE_MODULE_BASE___TIMEFRAMEKERNEL___H__
+#endif // __OPENSPACE_MODULE_SPACE___TIMEFRAMEKERNEL___H__

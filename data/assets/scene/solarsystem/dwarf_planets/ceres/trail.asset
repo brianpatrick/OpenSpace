@@ -1,4 +1,4 @@
-local transforms = asset.require("scene/solarsystem/sun/transforms")
+local sunAsset = asset.require("scene/solarsystem/sun/transforms")
 local kernels = asset.require("./kernels")
 local coreKernels = asset.require("spice/core")
 
@@ -6,7 +6,7 @@ local coreKernels = asset.require("spice/core")
 
 local CeresTrail = {
   Identifier = "CeresTrail",
-  Parent = transforms.SolarSystemBarycenter.Identifier,
+  Parent = sunAsset.SolarSystemBarycenter.Identifier,
   Renderable = {
     Type = "RenderableTrailOrbit",
     Translation = {
@@ -18,10 +18,11 @@ local CeresTrail = {
     Period = 1680,
     Resolution = 1000
   },
-  Tag = { "planetTrail_solarSystem", "planetTrail_dwarf" },
+  Tag = { "planetTrail_dwarf" },
   GUI = {
     Name = "Ceres Trail",
-    Path = "/Solar System/Dwarf Planets/Ceres"
+    Path = "/Solar System/Dwarf Planets/Ceres",
+    Focusable = false
   }
 }
 

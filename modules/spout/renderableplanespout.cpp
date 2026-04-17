@@ -2,7 +2,7 @@
  *                                                                                       *
  * OpenSpace                                                                             *
  *                                                                                       *
- * Copyright (c) 2014-2025                                                               *
+ * Copyright (c) 2014-2026                                                               *
  *                                                                                       *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this  *
  * software and associated documentation files (the "Software"), to deal in the Software *
@@ -27,31 +27,27 @@
 #include <modules/spout/renderableplanespout.h>
 
 #include <openspace/documentation/documentation.h>
-#include <openspace/documentation/verifier.h>
-#include <ghoul/logging/logmanager.h>
-#include <optional>
+#include <openspace/scene/scenegraphnode.h>
+#include <ghoul/format.h>
+#include <ghoul/misc/dictionary.h>
+#include <ghoul/opengl/textureunit.h>
 
 namespace {
-    constexpr openspace::properties::Property::PropertyInfo NameInfo = {
-        "SpoutName",
-        "Spout Sender Name",
-        "A value to explicitly set the Spout receiver to use a specific name. If this "
-        "is not a valid name, an empty image is used.",
-        openspace::properties::Property::Visibility::AdvancedUser
-    };
-
-    struct [[codegen::Dictionary(RenderablePlaneSpout)]] Parameters {
-        // [[codegen::verbatim(NameInfo.description)]]
-        std::optional<std::string> spoutName;
-    };
-#include "renderableplanespout_codegen.cpp"
-
+    // Renders a plane with a texture that is provided by another application on the same
+    // computer using the SPOUT library.
+    //
+    // Note: The SPOUT library is only available on Windows.
+    struct [[codegen::Dictionary(RenderablePlaneSpout)]] Parameters {};
 } // namespace
+#include "renderableplanespout_codegen.cpp"
 
 namespace openspace {
 
-documentation::Documentation RenderablePlaneSpout::Documentation() {
-    return codegen::doc<Parameters>("spout_screenspace_spout");
+Documentation RenderablePlaneSpout::Documentation() {
+    return codegen::doc<Parameters>(
+        "spout_renderable_planespout",
+        SpoutReceiverPropertyProxy::Documentation()
+    );
 }
 
 RenderablePlaneSpout::RenderablePlaneSpout(const ghoul::Dictionary& dictionary)
@@ -69,14 +65,14 @@ RenderablePlaneSpout::RenderablePlaneSpout(const ghoul::Dictionary& dictionary)
             setIdentifier("RenderablePlaneSpout");
         }
         else {
-            setIdentifier("RenderablePlaneSpout" + std::to_string(iIdentifier));
+            setIdentifier(std::format("RenderablePlaneSpout{}", iIdentifier));
         }
         id++;
     }
 
     if (_guiName.empty()) {
         // Adding an extra space to the user-facing name as it looks nicer
-        setGuiName("RenderablePlaneSpout " + std::to_string(iIdentifier));
+        setGuiName(std::format("RenderablePlaneSpout {}", iIdentifier));
     }
 }
 
@@ -91,22 +87,9 @@ void RenderablePlaneSpout::update(const UpdateData& data) {
     _spoutReceiver.updateReceiver();
 }
 
-void RenderablePlaneSpout::bindTexture() {
+void RenderablePlaneSpout::bindTexture(ghoul::opengl::TextureUnit& unit) {
     if (_spoutReceiver.isReceiving()) {
-        _spoutReceiver.saveGLTextureState();
-        glBindTexture(GL_TEXTURE_2D, static_cast<GLuint>(_spoutReceiver.spoutTexture()));
-    }
-    else {
-        RenderablePlane::bindTexture();
-    }
-}
-
-void RenderablePlaneSpout::unbindTexture() {
-    if (_spoutReceiver.isReceiving()) {
-        _spoutReceiver.restoreGLTextureState();
-    }
-    else {
-        RenderablePlane::unbindTexture();
+        unit.bind(_spoutReceiver.spoutTexture());
     }
 }
 

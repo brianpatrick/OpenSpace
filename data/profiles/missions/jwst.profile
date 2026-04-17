@@ -1,7 +1,4 @@
 {
-  "additional_scripts": [
-    "openspace.setPropertyValue(\"Scene.MoonTrail.Renderable.Appearance.Color\", {0.7, 0.5, 0.5});"
-  ],
   "assets": [
     "base",
     "base_keybindings",
@@ -18,6 +15,19 @@
     "scene/solarsystem/telescopes/jwst/point_jwst",
     "scene/digitaluniverse/hdf"
   ],
+  "addons": {
+    "custom": [
+      {
+        "version": { "major": 1, "minor": 0 },
+        "identifier": "l2_spacecraft",
+        "name": "Spacecraft in L2",
+        "description": "Includes other spacecraft that are in the Earth's L2 orbit.",
+        "assets": [
+          "scene/solarsystem/telescopes/euclid/euclid"
+        ]
+      }
+    ]
+  },
   "camera": {
     "aim": "",
     "anchor": "JWSTModel",
@@ -58,60 +68,6 @@
     315360000.0,
     630720000.0
   ],
-  "keybindings": [
-    {
-      "action": "os.solarsystem.ToggleSatelliteTrails",
-      "key": "S"
-    },
-    {
-      "action": "os.jwst.ToggleLagrangianPoints",
-      "key": "P"
-    },
-    {
-      "action": "os.jwst.ToggleHudf",
-      "key": "U"
-    },
-    {
-      "action": "os.jwst.ToggleL2",
-      "key": "O"
-    },
-    {
-      "action": "os.jwst.ToggleFov",
-      "key": "V"
-    },
-    {
-      "action": "os.jwst.SetupLaunch",
-      "key": "J"
-    },
-    {
-      "action": "os.jwst.ToggleSunTrail",
-      "key": "K"
-    },
-    {
-      "action": "os.jwst.PlayForwards",
-      "key": "M"
-    },
-    {
-      "action": "os.jwst.PlayBackwards",
-      "key": "N"
-    },
-    {
-      "action": "os.jwst.ClearTimelapse",
-      "key": "B"
-    },
-    {
-      "action": "os.jwst.ToggleTrailsExceptMoon",
-      "key": "G"
-    },
-    {
-      "action": "os.jwst.ToggleDirection",
-      "key": "Y"
-    },
-    {
-      "action": "os.jwst.ToggleJwstTrails",
-      "key": "T"
-    }
-  ],
   "mark_nodes": [
     "JWSTModel",
     "JWSTTrail",
@@ -133,7 +89,7 @@
   },
   "properties": [
     {
-      "name": "{earth_satellites}.Renderable.Enabled",
+      "name": "{earth_satellites~space_stations}.Renderable.Enabled",
       "type": "setPropertyValue",
       "value": "false"
     },
@@ -248,9 +204,14 @@
       "value": "false"
     },
     {
-      "name": "Scene.Earth.Renderable.Layers.ColorLayers.VIIRS_NOAA20_Temporal.Enabled",
+      "name": "Scene.Earth.Renderable.Layers.ColorLayers.Temporal_NOAA20_VIIRS.Enabled",
       "type": "setPropertyValueSingle",
       "value": "true"
+    },
+    {
+      "name": "Scene.MoonTrail.Renderable.Appearance.Color",
+      "type": "setPropertyValueSingle",
+      "value": "{0.7, 0.5, 0.5}"
     }
   ],
   "time": {
@@ -260,6 +221,6 @@
   },
   "version": {
     "major": 1,
-    "minor": 4
+    "minor": 5
   }
 }

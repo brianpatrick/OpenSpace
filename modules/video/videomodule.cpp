@@ -2,7 +2,7 @@
  *                                                                                       *
  * OpenSpace                                                                             *
  *                                                                                       *
- * Copyright (c) 2014-2025                                                               *
+ * Copyright (c) 2014-2026                                                               *
  *                                                                                       *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this  *
  * software and associated documentation files (the "Software"), to deal in the Software *
@@ -31,45 +31,23 @@
 #include <modules/globebrowsing/src/tileprovider/tileprovider.h>
 #include <openspace/util/factorymanager.h>
 #include <openspace/documentation/documentation.h>
-#include <openspace/scripting/lualibrary.h>
-
-namespace {
-    constexpr openspace::properties::Property::PropertyInfo EnabledInfo = {
-        "Enabled",
-        "Enabled",
-        "Decides if this module should be enabled."
-    };
-
-    struct [[codegen::Dictionary(VideoModule)]] Parameters {
-        // [[codegen::verbatim(EnabledInfo.description)]]
-        std::optional<bool> enabled;
-    };
-
-#include "videomodule_codegen.cpp"
-} // namespace
+#include <openspace/rendering/renderable.h>
+#include <openspace/rendering/screenspacerenderable.h>
+#include <ghoul/misc/assert.h>
+#include <ghoul/misc/dictionary.h>
+#include <ghoul/misc/templatefactory.h>
 
 namespace openspace {
 
-documentation::Documentation VideoModule::Documentation() {
-    return codegen::doc<Parameters>("module_video");
-}
-
 VideoModule::VideoModule()
     : OpenSpaceModule(VideoModule::Name)
-    , _enabled(EnabledInfo)
-{
-    addProperty(_enabled);
-}
+{}
 
-void VideoModule::internalInitialize(const ghoul::Dictionary& dict) {
-    const Parameters p = codegen::bake<Parameters>(dict);
-
-    _enabled = p.enabled.value_or(_enabled);
-
-    ghoul::TemplateFactory<globebrowsing::TileProvider>* fTileProvider =
-        FactoryManager::ref().factory<globebrowsing::TileProvider>();
+void VideoModule::internalInitialize(const ghoul::Dictionary&) {
+    ghoul::TemplateFactory<TileProvider>* fTileProvider =
+        FactoryManager::ref().factory<TileProvider>();
     ghoul_assert(fTileProvider, "TileProvider factory was not created");
-    fTileProvider->registerClass<globebrowsing::VideoTileProvider>("VideoTileProvider");
+    fTileProvider->registerClass<VideoTileProvider>("VideoTileProvider");
 
     ghoul::TemplateFactory<ScreenSpaceRenderable>* fSsRenderable =
         FactoryManager::ref().factory<ScreenSpaceRenderable>();
@@ -84,12 +62,12 @@ void VideoModule::internalInitialize(const ghoul::Dictionary& dict) {
     fRenderable->registerClass<RenderableVideoPlane>("RenderableVideoPlane");
 }
 
-std::vector<documentation::Documentation> VideoModule::documentations() const {
+std::vector<Documentation> VideoModule::documentations() const {
     return {
         RenderableVideoPlane::Documentation(),
         RenderableVideoSphere::Documentation(),
         ScreenSpaceVideo::Documentation(),
-        globebrowsing::VideoTileProvider::Documentation()
+        VideoTileProvider::Documentation()
     };
 }
 

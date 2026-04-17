@@ -1,4 +1,4 @@
-local globe = asset.require("../../earth")
+local earthAsset = asset.require("scene/solarsystem/planets/earth/globe")
 
 
 
@@ -16,17 +16,16 @@ local Layer = {
   Enabled = asset.enabled,
   ZIndex = 5,
   FilePath = texturesPath .. "earth_night.png",
-  Description = "Earth's city lights are clearly visible from space",
-  CacheSettings = { Enabled = false }
+  Description = "Earth's city lights are clearly visible from space"
 }
 
 
 asset.onInitialize(function()
-  openspace.globebrowsing.addLayer(globe.Earth.Identifier, "NightLayers", Layer)
+  openspace.globebrowsing.addLayer(earthAsset.Earth.Identifier, "NightLayers", Layer)
 end)
 
 asset.onDeinitialize(function()
-  openspace.globebrowsing.deleteLayer(globe.Earth.Identifier, "NightLayers", Layer)
+  openspace.globebrowsing.deleteLayer(earthAsset.Earth.Identifier, "NightLayers", Layer)
 end)
 
 asset.export("layer", Layer)

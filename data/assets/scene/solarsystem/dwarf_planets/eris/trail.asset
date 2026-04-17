@@ -3,7 +3,7 @@ local transforms = asset.require("./transforms")
 
 
 
-local Trail = {
+local ErisTrail = {
   Identifier = "ErisTrail",
   Parent = sunTransforms.SunEclipJ2000.Identifier,
   Renderable = {
@@ -18,20 +18,21 @@ local Trail = {
   Tag = { "planetTrail_dwarf" },
   GUI = {
     Name = "Eris Trail",
-    Path = "/Solar System/Dwarf Planets/Eris"
+    Path = "/Solar System/Dwarf Planets/Eris",
+    Focusable = false
   }
 }
 
 
 asset.onInitialize(function()
-  openspace.addSceneGraphNode(Trail)
+  openspace.addSceneGraphNode(ErisTrail)
 end)
 
 asset.onDeinitialize(function()
-  openspace.removeSceneGraphNode(Trail)
+  openspace.removeSceneGraphNode(ErisTrail)
 end)
 
-asset.export("Trail", Trail)
+asset.export(ErisTrail)
 
 
 

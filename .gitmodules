@@ -32,6 +32,9 @@
 [submodule "support/coding/codegen"]
 	path = support/coding/codegen
 	url = https://github.com/OpenSpace/codegen
+[submodule "modules/molecule/ext/mold"]
+	path = modules/molecule/ext/mold
+	url = https://github.com/scanberg/mdlib
 [submodule "modules/globebrowsing/ext/geos"]
 	path = modules/globebrowsing/ext/geos
 	url = https://github.com/OpenSpace/geos.git
@@ -41,10 +44,18 @@
 [submodule "support/doxygen/css"]
 	path = support/doxygen/css
 	url = https://github.com/jothepro/doxygen-awesome-css.git
-
 [submodule "modules/audio/ext/soloud"]
 	path = modules/audio/ext/soloud
 	url = https://github.com/jarikomppa/soloud
+[submodule "modules/opensoundcontrol/ext/oscpack"]
+	path = modules/opensoundcontrol/ext/oscpack
+	url = https://github.com/OpenSpace/oscpack.git
 [submodule "ext/json"]
 	path = ext/json
 	url = https://github.com/nlohmann/json
+[submodule "support/cmake/common-compile-settings"]
+	path = support/cmake/common-compile-settings
+	url = https://github.com/OpenSpace/common-compile-settings
+[submodule "modules/solarbrowsing/ext/openjpeg"]
+	path = modules/solarbrowsing/ext/openjpeg
+	url = https://github.com/uclouvain/openjpeg.git

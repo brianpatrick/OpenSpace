@@ -2,7 +2,7 @@
  *                                                                                       *
  * OpenSpace                                                                             *
  *                                                                                       *
- * Copyright (c) 2014-2025                                                               *
+ * Copyright (c) 2014-2026                                                               *
  *                                                                                       *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this  *
  * software and associated documentation files (the "Software"), to deal in the Software *
@@ -43,6 +43,7 @@ struct WindowDelegate {
     void (*setSynchronization)(bool enabled) = [](bool) {};
 
     bool (*windowHasResized)() = []() { return false; };
+    bool (*anyWindowHasResized)() = []() { return false; };
 
     double (*averageDeltaTime)() = []() { return 0.0; };
 
@@ -93,17 +94,17 @@ struct WindowDelegate {
 
     void (*swapBuffer)() = []() {};
 
-    int (*nWindows)() = []() { return 0; };
+    size_t (*nWindows)() = []() { return size_t(0); };
 
     int (*currentWindowId)() = []() { return 0; };
 
     int (*firstWindowId)() = []() { return 0; };
 
-    std::string (*nameForWindow)(int windowIdx) = [](int) { return std::string(); };
+    std::string (*nameForWindow)(size_t windowIdx) = [](size_t) { return std::string(); };
 
-    float (*horizFieldOfView)(int windowIdx) = [](int) { return 0.f; };
+    float (*horizFieldOfView)(size_t windowIdx) = [](size_t) { return 0.f; };
 
-    void (*setHorizFieldOfView)(int windowIdx, float hFovDeg) = [](int, float) {};
+    void (*setHorizFieldOfView)(size_t windowIdx, float hFovDeg) = [](size_t, float) {};
 
     void* (*getNativeWindowHandle)(size_t windowIndex) = [](size_t) -> void* {
         return nullptr;
@@ -130,6 +131,7 @@ struct WindowDelegate {
         [](const glm::vec2&) { return glm::vec2(0); };
 
     void (*setStatisticsGraphScale)(float scale) = [](float) {};
+    void (*setStatisticsGraphOffset)(glm::vec2 offset) = [](glm::vec2) {};
 
     void (*setMouseCursor)(Cursor cursor) = [](Cursor) {};
 };

@@ -2,9 +2,9 @@ local transforms = asset.require("./transforms")
 
 
 
-local Label = {
+local ErisLabel = {
   Identifier = "ErisLabel",
-  Parent = transforms.Position.Identifier,
+  Parent = transforms.ErisPosition.Identifier,
   Renderable = {
     Type = "RenderableLabel",
     Enabled = asset.enabled,
@@ -23,20 +23,21 @@ local Label = {
   GUI = {
     Name = "Eris Label",
     Path = "/Solar System/Dwarf Planets/Eris",
+    Focusable = false,
     Description = "Label for Eris, visible at the solarsystem overview zoom level"
   }
 }
 
 
 asset.onInitialize(function()
-  openspace.addSceneGraphNode(Label)
+  openspace.addSceneGraphNode(ErisLabel)
 end)
 
 asset.onDeinitialize(function()
-  openspace.removeSceneGraphNode(Label)
+  openspace.removeSceneGraphNode(ErisLabel)
 end)
 
-asset.export("Label", Label)
+asset.export(ErisLabel)
 
 
 

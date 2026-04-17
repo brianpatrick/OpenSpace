@@ -17,7 +17,6 @@ local Object = {
     Type = "RenderableOrbitalKepler",
     Path = sssb .. "sssb_data_apollo_asteroid.csv",
     Format = "SBDB",
-    Segments = 200,
     SegmentQuality = 6,
     Color = { 0.7, 0.7, 1.0 },
     TrailFade = 10,
@@ -26,6 +25,7 @@ local Object = {
   GUI = {
     Name = "Apollo Asteroids",
     Path = "/Solar System/Small Bodies",
+    Focusable = false,
     Description = [[Earth-crossing Near-Earth-Asteroids with semi-major axes larger than
       Earth's.]]
   }

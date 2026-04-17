@@ -1,4 +1,4 @@
-local globe = asset.require("../../rhea")
+local rheaAsset = asset.require("scene/solarsystem/planets/saturn/rhea/globe")
 
 
 
@@ -14,17 +14,16 @@ local Layer = {
   Identifier = "Texture",
   FilePath = texturesPath .. "rhea.jpg",
   Enabled = asset.enabled,
-  ZIndex = 5,
-  CacheSettings = { Enabled = false }
+  ZIndex = 5
 }
 
 
 asset.onInitialize(function()
-  openspace.globebrowsing.addLayer(globe.Rhea.Identifier, "ColorLayers", Layer)
+  openspace.globebrowsing.addLayer(rheaAsset.Rhea.Identifier, "ColorLayers", Layer)
 end)
 
 asset.onDeinitialize(function()
-  openspace.globebrowsing.deleteLayer(globe.Rhea.Identifier, "ColorLayers", Layer)
+  openspace.globebrowsing.deleteLayer(rheaAsset.Rhea.Identifier, "ColorLayers", Layer)
 end)
 
 asset.export("layer", Layer)

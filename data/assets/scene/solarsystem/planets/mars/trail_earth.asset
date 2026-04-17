@@ -1,17 +1,18 @@
-local transforms = asset.require("scene/solarsystem/planets/earth/transforms")
+local earthAsset = asset.require("scene/solarsystem/planets/earth/transforms")
 local coreKernels = asset.require("spice/core")
+local kernels = asset.require("./kernels")
 
 
 
 local MarsTrailEarth = {
   Identifier = "MarsTrailEarth",
-  Parent = transforms.EarthBarycenter.Identifier,
+  Parent = earthAsset.EarthBarycenter.Identifier,
   Renderable = {
     Type = "RenderableTrailOrbit",
     Enabled = false,
     Translation = {
       Type = "SpiceTranslation",
-      Target = coreKernels.ID.Mars,
+      Target = kernels.ID.Mars,
       Observer = coreKernels.ID.Earth
     },
     Color = { 0.814, 0.305, 0.220 },
@@ -22,6 +23,7 @@ local MarsTrailEarth = {
   GUI = {
     Name = "Mars trail from Earth",
     Path = "/Solar System/Planets/Mars",
+    Focusable = false,
     Description = "Trail of Mars as observed by the Earth"
   }
 }

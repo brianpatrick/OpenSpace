@@ -1,4 +1,4 @@
-local globe = asset.require("../../ganymede")
+local ganymedeAsset = asset.require("scene/solarsystem/planets/jupiter/ganymede/globe")
 
 
 
@@ -14,17 +14,16 @@ local Layer = {
   Identifier = "Texture",
   FilePath = texturesPath .. "ganymede.jpg",
   Enabled = asset.enabled,
-  ZIndex = 5,
-  CacheSettings = { Enabled = false }
+  ZIndex = 5
 }
 
 
 asset.onInitialize(function()
-  openspace.globebrowsing.addLayer(globe.Ganymede.Identifier, "ColorLayers", Layer)
+  openspace.globebrowsing.addLayer(ganymedeAsset.Ganymede.Identifier, "ColorLayers", Layer)
 end)
 
 asset.onDeinitialize(function()
-  openspace.globebrowsing.deleteLayer(globe.Ganymede.Identifier, "ColorLayers", Layer)
+  openspace.globebrowsing.deleteLayer(ganymedeAsset.Ganymede.Identifier, "ColorLayers", Layer)
 end)
 
 asset.export("layer", Layer)

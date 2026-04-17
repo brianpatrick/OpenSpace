@@ -1,11 +1,11 @@
-local transforms = asset.require("../model")
+local model = asset.require("../model")
 local kernels = asset.require("../kernels")
 
 
 
 local BelaReceiver = {
   Identifier = "BepiColomboMPO_BelaReceiver",
-  Parent = transforms.BepiColombo.Identifier,
+  Parent = model.BepiColombo.Identifier,
   Renderable = {
     Type = "RenderableFov",
     Body = kernels.ID.MPO,
@@ -22,12 +22,13 @@ local BelaReceiver = {
   GUI = {
     Name = "MPO BELA Receiver",
     Path = "/Solar System/Missions/BepiColombo/Instruments",
+    Focusable = false
   }
 }
 
 local BelaTransmitterMain = {
   Identifier = "BepiColomboMPO_BelaTransmitterMain",
-  Parent = transforms.BepiColombo.Identifier,
+  Parent = model.BepiColombo.Identifier,
   Renderable = {
     Type = "RenderableFov",
     Body = kernels.ID.MPO,
@@ -44,12 +45,13 @@ local BelaTransmitterMain = {
   GUI = {
     Name = "MPO BELA Transmitter Main",
     Path = "/Solar System/Missions/BepiColombo/Instruments",
+    Focusable = false
   }
 }
 
 local BelaTransmitterRed = {
   Identifier = "BepiColomboMPO_BelaTransmitterRed",
-  Parent = transforms.BepiColombo.Identifier,
+  Parent = model.BepiColombo.Identifier,
   Renderable = {
     Type = "RenderableFov",
     Body = kernels.ID.MPO,
@@ -66,6 +68,7 @@ local BelaTransmitterRed = {
   GUI = {
     Name = "MPO BELA Transmitter Main",
     Path = "/Solar System/Missions/BepiColombo/Instruments",
+    Focusable = false
   }
 }
 

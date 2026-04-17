@@ -1,4 +1,4 @@
-local sun = asset.require("scene/solarsystem/sun/transforms")
+local sunAsset = asset.require("scene/solarsystem/sun/transforms")
 local transforms = asset.require("./transforms")
 
 
@@ -69,7 +69,7 @@ local OrionNebulaModel = {
     --PerformShading = false,
     RotationVector = { 0.0, 22.3, 0.0 },
     LightSources = {
-      sun.LightSource,
+      sunAsset.LightSource,
       {
         Identifier = "Camera",
         Type = "CameraLightSource",
@@ -80,6 +80,7 @@ local OrionNebulaModel = {
   GUI = {
     Name = "Orion Nebula Model",
     Path = "/Milky Way/Orion",
+    Focusable = false,
     Description = "Orion Nebula 3D model. See Orion Nebula for description"
   }
 }
@@ -103,7 +104,7 @@ local OrionNebulaShocksModel = {
     --PerformShading = false,
     RotationVector = { 0.0, 22.3, 0.0 },
     LightSources = {
-      sun.LightSource,
+      sunAsset.LightSource,
       {
         Identifier = "Camera",
         Type = "CameraLightSource",
@@ -114,6 +115,7 @@ local OrionNebulaShocksModel = {
   GUI = {
     Name = "Orion Nebula Shocks",
     Path = "/Milky Way/Orion",
+    Focusable = false,
     Description = "Orion Nebula Shocks 3D model. See Orion Nebula for description"
   }
 }
@@ -137,7 +139,7 @@ local OrionNebulaProplydsModel = {
     --PerformShading = false,
     RotationVector = { 0.0, 22.3, 0.0 },
     LightSources = {
-      sun.LightSource,
+      sunAsset.LightSource,
       {
         Identifier = "Camera",
         Type = "CameraLightSource",
@@ -148,6 +150,7 @@ local OrionNebulaProplydsModel = {
   GUI = {
     Name = "Orion Nebula Proplyds",
     Path = "/Milky Way/Orion",
+    Focusable = false,
     Description = "Orion Nebula Proplyds 3D model. See Orion Nebula for description"
   }
 }

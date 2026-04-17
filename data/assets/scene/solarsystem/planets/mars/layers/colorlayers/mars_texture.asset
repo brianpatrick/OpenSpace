@@ -1,4 +1,4 @@
-local globe = asset.require("../../mars")
+local marsAsset = asset.require("scene/solarsystem/planets/mars/globe")
 
 
 
@@ -16,17 +16,16 @@ local Layer = {
   Enabled = asset.enabled,
   ZIndex = 5,
   FilePath = texturesPath .. "mars.png",
-  Description = "Default jpg texture for Mars",
-  CacheSettings = { Enabled = false }
+  Description = "Default jpg texture for Mars"
 }
 
 
 asset.onInitialize(function()
-  openspace.globebrowsing.addLayer(globe.Mars.Identifier, "ColorLayers", Layer)
+  openspace.globebrowsing.addLayer(marsAsset.Mars.Identifier, "ColorLayers", Layer)
 end)
 
 asset.onDeinitialize(function()
-  openspace.globebrowsing.deleteLayer(globe.Mars.Identifier, "ColorLayers", Layer)
+  openspace.globebrowsing.deleteLayer(marsAsset.Mars.Identifier, "ColorLayers", Layer)
 end)
 
 asset.export("layer", Layer)

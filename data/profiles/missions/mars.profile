@@ -33,20 +33,6 @@
     315360000.0,
     630720000.0
   ],
-  "keybindings": [
-    {
-      "action": "os.insight.Setup",
-      "key": "I"
-    },
-    {
-      "action": "os.insight.DisableLayers",
-      "key": "SHIFT+I"
-    },
-    {
-      "action": "os.perseverance.Setup",
-      "key": "P"
-    }
-  ],
   "mark_nodes": [
     "Mars",
     "Insight",
@@ -54,7 +40,7 @@
   ],
   "meta": {
     "author": "OpenSpace Team",
-    "description": "This profile shows the landing of the NASA InSight lander on Mars. The final minutes of the approach are shown with the lander finishing on the surface of Mars.  This profile also includes the landing trail and model for the Mars2020 rover Perseverence.",
+    "description": "This profile shows the landing of the NASA InSight lander on Mars. The final minutes of the approach are shown with the lander finishing on the surface of Mars. This profile also includes the landing trail and model for the Mars2020 rover Perseverence.",
     "license": "MIT License",
     "name": "Mars",
     "url": "https://www.openspaceproject.com",
@@ -70,6 +56,6 @@
   },
   "version": {
     "major": 1,
-    "minor": 4
+    "minor": 5
   }
 }

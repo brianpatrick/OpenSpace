@@ -1,12 +1,11 @@
-local transforms = asset.require("scene/solarsystem/sun/transforms")
-local earthTransforms = asset.require("scene/solarsystem/planets/earth/transforms")
+local earthAsset = asset.require("scene/solarsystem/planets/earth/transforms")
 local coreKernels = asset.require("spice/core")
 
 
 
 local MercuryTrailEarth = {
   Identifier = "MercuryTrailEarth",
-  Parent = earthTransforms.EarthBarycenter.Identifier,
+  Parent = earthAsset.EarthBarycenter.Identifier,
   Renderable = {
     Type = "RenderableTrailOrbit",
     Enabled = false,
@@ -23,6 +22,7 @@ local MercuryTrailEarth = {
   GUI = {
     Name = "Mercury trail from Earth",
     Path = "/Solar System/Planets/Mercury",
+    Focusable = false,
     Description = "Trail of Mercury as observed by the Earth"
   }
 }

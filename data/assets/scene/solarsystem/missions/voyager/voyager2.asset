@@ -1,4 +1,4 @@
-local sunTransforms = asset.require("scene/solarsystem/sun/transforms")
+local sunAsset = asset.require("scene/solarsystem/sun/transforms")
 local coreKernels = asset.require("spice/core")
 
 
@@ -42,7 +42,7 @@ local RotationMatrix = {
 
 local Voyager2 = {
   Identifier = "Voyager_2",
-  Parent = sunTransforms.SolarSystemBarycenter.Identifier,
+  Parent = sunAsset.SolarSystemBarycenter.Identifier,
   TimeFrame = {
     Type = "TimeFrameInterval",
     Start = "1977-AUG-20 16:07:06.535",
@@ -66,7 +66,7 @@ local Voyager2 = {
     GeometryFile = models .. "Voyager.glb",
     ModelTransform = RotationMatrix,
     LightSources = {
-      sunTransforms.LightSource,
+      sunAsset.LightSource,
       {
         Identifier = "Camera",
         Type = "CameraLightSource",
@@ -86,7 +86,7 @@ local Voyager2 = {
 -- appear
 local VoyagerTrailCruiseEarthJupiter = {
   Identifier = "Voyager_2_Trail_Cruise_Earth_Jupiter",
-  Parent = sunTransforms.SolarSystemBarycenter.Identifier,
+  Parent = sunAsset.SolarSystemBarycenter.Identifier,
   Renderable = {
     Type = "RenderableTrailTrajectory",
     Enabled = asset.enabled,
@@ -102,13 +102,14 @@ local VoyagerTrailCruiseEarthJupiter = {
   Tag = { "voyager2_trail" },
   GUI = {
     Name = "Voyager 2 Trail Cruise Earth-Jupiter",
-    Path = "/Solar System/Missions/Voyager 2"
+    Path = "/Solar System/Missions/Voyager 2",
+    Focusable = false
   }
 }
 
 local VoyagerTrailEncounterJupiter = {
   Identifier = "Voyager_2_Trail_Encounter_Jupiter",
-  Parent = sunTransforms.SolarSystemBarycenter.Identifier,
+  Parent = sunAsset.SolarSystemBarycenter.Identifier,
   Renderable = {
     Type = "RenderableTrailTrajectory",
     Enabled = asset.enabled,
@@ -119,21 +120,21 @@ local VoyagerTrailEncounterJupiter = {
     },
     Color = { 0.70, 0.50, 0.20 },
     EnableFade = false,
-    -- @TODO: Probably an off-by-one bug in RenderableTrailTrajectory?
-    StartTime = "1979 JUL 05 23:24:00",
+    StartTime = "1979 JUL 06",
     EndTime = "1979 JUL 15",
     SampleInterval = 100
   },
   Tag = { "voyager2_trail" },
   GUI = {
     Name = "Voyager 2 Trail Encounter Jupiter",
-    Path = "/Solar System/Missions/Voyager 2"
+    Path = "/Solar System/Missions/Voyager 2",
+    Focusable = false
   }
 }
 
 local VoyagerTrailCruiseJupiterSaturn = {
   Identifier = "Voyager_2_Trail_Cruise_Jupiter_Saturn",
-  Parent = sunTransforms.SolarSystemBarycenter.Identifier,
+  Parent = sunAsset.SolarSystemBarycenter.Identifier,
   Renderable = {
     Type = "RenderableTrailTrajectory",
     Enabled = asset.enabled,
@@ -150,13 +151,14 @@ local VoyagerTrailCruiseJupiterSaturn = {
   Tag = { "voyager2_trail" },
   GUI = {
     Name = "Voyager 2 Trail Cruise Jupiter-Saturn",
-    Path = "/Solar System/Missions/Voyager 2"
+    Path = "/Solar System/Missions/Voyager 2",
+    Focusable = false
   }
 }
 
 local VoyagerTrailEncounterSaturn = {
   Identifier = "Voyager_2_Trail_Encounter_Saturn",
-  Parent = sunTransforms.SolarSystemBarycenter.Identifier,
+  Parent = sunAsset.SolarSystemBarycenter.Identifier,
   Renderable = {
     Type = "RenderableTrailTrajectory",
     Enabled = asset.enabled,
@@ -167,21 +169,21 @@ local VoyagerTrailEncounterSaturn = {
     },
     EnableFade = false,
     Color = { 0.70, 0.50, 0.20 },
-    -- @TODO: Probably an off-by-one bug in RenderableTrailTrajectory?
-    StartTime = "1981 AUG 22 23:08:30",
+    StartTime = "1981 AUG 23",
     EndTime = "1981 AUG 30",
     SampleInterval = 100
   },
   Tag = { "voyager2_trail" },
   GUI = {
     Name = "Voyager 2 Trail Encounter Saturn",
-    Path = "/Solar System/Missions/Voyager 2"
+    Path = "/Solar System/Missions/Voyager 2",
+    Focusable = false
   }
 }
 
 local VoyagerTrailCruiseSaturnUranus = {
   Identifier = "Voyager_2_Trail_Cruise_Saturn_Uranus",
-  Parent = sunTransforms.SolarSystemBarycenter.Identifier,
+  Parent = sunAsset.SolarSystemBarycenter.Identifier,
   Renderable = {
     Type = "RenderableTrailTrajectory",
     Enabled = asset.enabled,
@@ -198,13 +200,14 @@ local VoyagerTrailCruiseSaturnUranus = {
   Tag = { "voyager2_trail" },
   GUI = {
     Name = "Voyager 2 Trail Cruise Saturn-Uranus",
-    Path = "/Solar System/Missions/Voyager 2"
+    Path = "/Solar System/Missions/Voyager 2",
+    Focusable = false
   }
 }
 
 local VoyagerTrailEncounterUranus = {
   Identifier = "Voyager_2_Trail_Encounter_Uranus",
-  Parent = sunTransforms.SolarSystemBarycenter.Identifier,
+  Parent = sunAsset.SolarSystemBarycenter.Identifier,
   Renderable = {
     Type = "RenderableTrailTrajectory",
     Enabled = asset.enabled,
@@ -215,21 +218,21 @@ local VoyagerTrailEncounterUranus = {
     },
     EnableFade = false,
     Color = { 0.70, 0.50, 0.20 },
-    -- @TODO: Probably an off-by-one bug in RenderableTrailTrajectory?
-    StartTime = "1986 JAN 21 23:30:00",
+    StartTime = "1986 JAN 22",
     EndTime = "1986 JAN 27",
     SampleInterval = 100
   },
   Tag = { "voyager2_trail" },
   GUI = {
     Name = "Voyager 2 Trail Encounter Uranus",
-    Path = "/Solar System/Missions/Voyager 2"
+    Path = "/Solar System/Missions/Voyager 2",
+    Focusable = false
   }
 }
 
 local VoyagerTrailCruiseUranusNeptune = {
   Identifier = "Voyager_2_Trail_Cruise_Uranus_Neptune",
-  Parent = sunTransforms.SolarSystemBarycenter.Identifier,
+  Parent = sunAsset.SolarSystemBarycenter.Identifier,
   Renderable = {
     Type = "RenderableTrailTrajectory",
     Enabled = asset.enabled,
@@ -246,13 +249,14 @@ local VoyagerTrailCruiseUranusNeptune = {
   Tag = { "voyager2_trail" },
   GUI = {
     Name = "Voyager 2 Trail Cruise Uranus-Neptune",
-    Path = "/Solar System/Missions/Voyager 2"
+    Path = "/Solar System/Missions/Voyager 2",
+    Focusable = false
   }
 }
 
 local VoyagerTrailEncounterNeptune = {
   Identifier = "Voyager_2_Trail_Encounter_Neptune",
-  Parent = sunTransforms.SolarSystemBarycenter.Identifier,
+  Parent = sunAsset.SolarSystemBarycenter.Identifier,
   Renderable = {
     Type = "RenderableTrailTrajectory",
     Enabled = asset.enabled,
@@ -263,21 +267,21 @@ local VoyagerTrailEncounterNeptune = {
     },
     EnableFade = false,
     Color = { 0.70, 0.50, 0.20 },
-    -- @TODO: Probably an off-by-one bug in RenderableTrailTrajectory?
-    StartTime = "1989 AUG 23 22:30:00",
+    StartTime = "1989 AUG 24",
     EndTime = "1989 AUG 26",
     SampleInterval = 100
   },
   Tag = { "voyager2_trail" },
   GUI = {
     Name = "Voyager 2 Trail Encounter Neptune",
-    Path = "/Solar System/Missions/Voyager 2"
+    Path = "/Solar System/Missions/Voyager 2",
+    Focusable = false
   }
 }
 
 local VoyagerTrailCruiseNeptuneInf = {
   Identifier = "Voyager_2_Trail_Cruise_Neptune_Inf",
-  Parent = sunTransforms.SolarSystemBarycenter.Identifier,
+  Parent = sunAsset.SolarSystemBarycenter.Identifier,
   Renderable = {
     Type = "RenderableTrailTrajectory",
     Enabled = asset.enabled,
@@ -294,7 +298,8 @@ local VoyagerTrailCruiseNeptuneInf = {
   Tag = { "voyager2_trail" },
   GUI = {
     Name = "Voyager 2 Trail Cruise Neptune-Inf",
-    Path = "/Solar System/Missions/Voyager 2"
+    Path = "/Solar System/Missions/Voyager 2",
+    Focusable = false
   }
 }
 

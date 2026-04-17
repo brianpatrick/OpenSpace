@@ -1,4 +1,4 @@
-local transforms = asset.require("./moon")
+local transforms = asset.require("./globe")
 
 
 
@@ -24,7 +24,8 @@ local MoonMarker = {
   },
   GUI = {
     Name = "Moon Marker",
-    Path = "/Solar System/Planets/Earth/Moon"
+    Path = "/Solar System/Planets/Earth/Moon",
+    Focusable = false
   }
 }
 

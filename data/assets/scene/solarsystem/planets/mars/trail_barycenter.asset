@@ -1,11 +1,11 @@
-local transforms = asset.require("scene/solarsystem/sun/transforms")
+local sunAsset = asset.require("scene/solarsystem/sun/transforms")
 local coreKernels = asset.require("spice/core")
 
 
 
 local MarsBarycenterTrail = {
   Identifier = "MarsBarycenterTrail",
-  Parent = transforms.SolarSystemBarycenter.Identifier,
+  Parent = sunAsset.SolarSystemBarycenter.Identifier,
   Renderable = {
     Type = "RenderableTrailOrbit",
     Enabled = false,
@@ -22,6 +22,7 @@ local MarsBarycenterTrail = {
   GUI = {
     Name = "Mars Barycenter Trail",
     Path = "/Solar System/Planets/Mars",
+    Focusable = false,
     Description = "Trail of Mars' Barycenter as observed by the Sun"
   }
 }

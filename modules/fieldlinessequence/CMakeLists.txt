@@ -2,7 +2,7 @@
 #                                                                                        #
 # OpenSpace                                                                              #
 #                                                                                        #
-# Copyright (c) 2014-2025                                                                #
+# Copyright (c) 2014-2026                                                                #
 #                                                                                        #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of this   #
 # software and associated documentation files (the "Software"), to deal in the Software  #
@@ -26,23 +26,27 @@ include(${PROJECT_SOURCE_DIR}/support/cmake/module_definition.cmake)
 
 set(HEADER_FILES
   rendering/renderablefieldlinessequence.h
-  util/fieldlinesstate.h
+  tasks/findlastclosedfieldlinestask.h
+  tasks/kameleonvolumetofieldlinestask.h
   util/commons.h
+  util/fieldlinesstate.h
   util/kameleonfieldlinehelper.h
 )
 source_group("Header Files" FILES ${HEADER_FILES})
 
 set(SOURCE_FILES
   rendering/renderablefieldlinessequence.cpp
-  util/fieldlinesstate.cpp
+  tasks/findlastclosedfieldlinestask.cpp
+  tasks/kameleonvolumetofieldlinestask.cpp
   util/commons.cpp
+  util/fieldlinesstate.cpp
   util/kameleonfieldlinehelper.cpp
 )
 source_group("Source Files" FILES ${SOURCE_FILES})
 
 set(SHADER_FILES
-  shaders/fieldlinessequence_vs.glsl
   shaders/fieldlinessequence_fs.glsl
+  shaders/fieldlinessequence_vs.glsl
 )
 source_group("Shader Files" FILES ${SHADER_FILES})
 
